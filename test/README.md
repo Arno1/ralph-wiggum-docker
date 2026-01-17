@@ -12,6 +12,9 @@ test/
 ├── lib/                     # Shared libraries
 │   ├── common.sh            # Colors, pass/fail, infrastructure tests
 │   └── project.sh           # Test project creation/management
+├── cli/                     # CLI command tests
+│   ├── test-cli.ps1         # Tests all ralph CLI commands (PowerShell)
+│   └── test-cli.sh          # Tests all ralph CLI commands (Bash)
 ├── backends/                # Backend configs (mirrors docker/cli/)
 │   ├── claude.sh            # Claude Code backend
 │   ├── gemini.sh            # Gemini backend
@@ -30,11 +33,17 @@ test/
 ## Quick Start
 
 ```bash
-# Linux/Mac/WSL
+# Docker tests - Linux/Mac/WSL
 ./test/test-all.sh
 
-# Windows PowerShell
+# Docker tests - Windows PowerShell
 .\test\test-all.ps1
+
+# CLI tests - Windows PowerShell (recommended)
+.\test\cli\test-cli.ps1
+
+# CLI tests - Linux/Mac/WSL
+bash -c 'source test/cli/test-cli.sh'
 ```
 
 ## What It Tests
@@ -52,6 +61,39 @@ test/
 | openai-api | Direct API with `OPENAI_API_KEY` |
 | opencode-oauth | Host `~/.local/share/opencode` credentials |
 | GLM (z.ai) | z.ai backend with `GLM_AUTH_TOKEN` |
+
+## CLI Tests
+
+The `test/cli/` directory contains tests for the Ralph CLI commands.
+
+**Tests included:**
+
+| Test | Description |
+|------|-------------|
+| ralph --version | Version output |
+| ralph --help | Help output |
+| ralph list | List projects |
+| ralph new | Create project |
+| ralph show | Show project config |
+| ralph delete | Delete project |
+| ralph validate | Validate config |
+| ralph -p -s dashboard | Dashboard display mode |
+| ralph -p -s tasks | Tasks display mode |
+| ralph -p -s progress | Progress display mode |
+| ralph -p -t | Task detail display |
+| ralph new --preset | Preset configuration |
+| ralph new --builder-* | Builder options |
+| ralph new --max-iterations | Loop options |
+
+**Running CLI tests:**
+
+```powershell
+# Windows PowerShell (recommended)
+.\test\cli\test-cli.ps1
+
+# Linux/Mac/WSL
+bash -c 'source test/cli/test-cli.sh'
+```
 
 ## How It Works
 
