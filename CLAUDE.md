@@ -46,11 +46,34 @@ cp env.template .env
 # 2. Build the image (once)
 docker compose build
 
-# 3. Create a project
-python configure.py  # Interactive wizard
+# 3. Build CLI (optional, for project management)
+bun install && bun run build
 
-# 4. Run (isolated container)
+# 4. Create a project
+ralph new my-project --preset=three-tier
+# Or use: python configure.py
+
+# 5. Run (isolated container)
 RALPH_PROJECT_DIR=./.projects/my-project docker compose run --rm ralph
+```
+
+## CLI Tool
+
+The `ralph` CLI provides project management commands. See [docs/CLI.md](docs/CLI.md) for full reference.
+
+```bash
+# Project management
+ralph new <name>              # Create project
+ralph new --preset=three-tier # With preset
+ralph list                    # List projects
+ralph show <name>             # Show config
+ralph delete <name>           # Delete project
+ralph validate <path>         # Validate config.json
+
+# Display modes (requires task specs)
+ralph -p <path> -s dashboard  # Project overview
+ralph -p <path> -s tasks      # Task list
+ralph -p <path> -s progress   # Progress view
 ```
 
 ## Config Schema (3-Tier)
@@ -214,6 +237,12 @@ ralph-wiggum-docker-loop/
 ├── configure.py                  # Interactive project bootstrap
 ├── docker-compose.yml            # Container orchestration
 ├── env.template                  # Environment template
+├── package.json                  # CLI dependencies
+├── src/                          # CLI source code
+│   ├── cli/                      # CLI commands
+│   └── ...                       # TUI components
+├── docs/                         # Documentation
+│   └── CLI.md                    # CLI reference
 ├── template/                     # Project template
 │   ├── GOAL.md                   # Project objective template
 │   ├── AGENTS.md                 # Development rules (canonical)
@@ -243,6 +272,7 @@ ralph-wiggum-docker-loop/
 ├── .projects/                    # All projects (gitignored)
 │   └── <project>/                # Each project (isolated)
 ├── test/                         # Test suite
+│   └── cli/                      # CLI tests
 ├── scripts/                      # Launcher scripts
 └── static/                       # Assets
 
@@ -322,6 +352,18 @@ Run the Docker test suite to validate all configurations:
 ```
 
 Tests all auth modes (glm, anthropic-oauth, anthropic-api, gemini-oauth, etc.), volume mounts, and image builds.
+
+### CLI Tests
+
+```bash
+# Linux/Mac
+./test/cli/test-cli.sh
+
+# Windows PowerShell
+.\test\cli\test-cli.ps1
+```
+
+Tests all CLI commands: new, list, show, delete, validate, and display modes.
 
 ## Usage
 
