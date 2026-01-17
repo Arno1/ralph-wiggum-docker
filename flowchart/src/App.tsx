@@ -427,18 +427,6 @@ export default function App() {
     updateVisibility(-1);
   }, [updateVisibility]);
 
-  const handleCopyPositions = useCallback(() => {
-    const positions: Record<string, { x: number; y: number }> = {};
-    nodes.forEach(node => {
-      if (node.type !== 'tierHeader' && node.type !== 'codePanel') {
-        positions[node.id] = { x: Math.round(node.position.x), y: Math.round(node.position.y) };
-      }
-    });
-    const code = `const positions: Record<string, { x: number; y: number }> = ${JSON.stringify(positions, null, 2)};`;
-    navigator.clipboard.writeText(code);
-    alert('Positions copied to clipboard! Paste into App.tsx to save.');
-  }, [nodes]);
-
   return (
     <div className="app">
       <header className="header">
@@ -477,7 +465,6 @@ export default function App() {
           Next ▶
         </button>
         <button onClick={handleReset} className="btn ghost">Reset</button>
-        <button onClick={handleCopyPositions} className="btn ghost">📋 Copy Positions</button>
       </footer>
     </div>
   );
