@@ -28,7 +28,7 @@ try {
     # Check for config
     if (-not (Test-Path $ConfigFile)) {
         Write-Host "ERROR: Project not found: $Project" -ForegroundColor Red
-        Write-Host "Run 'python configure.py' first to create it." -ForegroundColor DarkGray
+        Write-Host "Run 'ralph new $Project' first to create it." -ForegroundColor DarkGray
         Write-Host ""
         # List available projects
         if (Test-Path ".projects") {

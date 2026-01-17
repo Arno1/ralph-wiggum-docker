@@ -51,7 +51,6 @@ bun install && bun run build
 
 # 4. Create a project
 ralph new my-project --preset=three-tier
-# Or use: python configure.py
 
 # 5. Run (isolated container)
 RALPH_PROJECT_DIR=./.projects/my-project docker compose run --rm ralph
@@ -234,7 +233,6 @@ EOF
 ralph-wiggum-docker-loop/
 ├── CLAUDE.md                     # This file
 ├── README.md                     # User documentation
-├── configure.py                  # Interactive project bootstrap
 ├── docker-compose.yml            # Container orchestration
 ├── env.template                  # Environment template
 ├── package.json                  # CLI dependencies
