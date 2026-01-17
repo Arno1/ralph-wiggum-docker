@@ -50,7 +50,7 @@ CONFIG_FILE="$PROJECT_DIR/config.json"
 # Check for config
 if [[ ! -f "$CONFIG_FILE" ]]; then
     echo -e "${RED}ERROR: Project not found: $PROJECT_NAME${NC}"
-    echo -e "${DIM}Run 'python configure.py' first to create it.${NC}"
+    echo -e "${DIM}Run 'ralph new $PROJECT_NAME' first to create it.${NC}"
     exit 1
 fi
 

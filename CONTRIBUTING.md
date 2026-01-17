@@ -42,8 +42,11 @@ cp env.template .env
 # Build Docker image
 docker compose build
 
+# Build CLI
+bun install && bun run build
+
 # Create a test project
-python configure.py
+ralph new test-project --preset=minimal
 
 # Run tests
 .claude/skills/docker-test/scripts/test-all.sh

@@ -40,7 +40,9 @@ const program = new Command();
 program
     .name('ralph')
     .description('TUI dashboard and project configurator for ralph-wiggum-docker-loop')
-    .version('1.0.0');
+    .version('1.0.0')
+    .allowExcessArguments(false)
+    .allowUnknownOption(false);
 
 // ============================================
 // Display Mode Options (existing functionality)
@@ -50,7 +52,11 @@ program
     .option('-s, --screen <screen>', 'Screen to display (dashboard, tasks, progress)')
     .option('-t, --task <id>', 'Show task detail by ID')
     .option('--status <status>', 'Filter tasks by status (pending, in_progress, completed, blocked)')
-    .option('--phase <number>', 'Filter tasks by phase number');
+    .option('--phase <number>', 'Filter tasks by phase number')
+    .action(() => {
+        // Default action when no subcommand - handled after parse()
+        // This prevents commander from showing help
+    });
 
 // ============================================
 // Project Management Commands

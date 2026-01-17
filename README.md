@@ -71,10 +71,13 @@ cp env.template .env
 # 3. Construct your Star Destroyer
 docker compose build
 
-# 4. Begin your first mission
-python configure.py
+# 4. Assemble the Jedi Council (build CLI)
+bun install && bun run build
 
-# 5. Punch it, Chewie!
+# 5. Begin your first mission
+ralph new my-project --preset=three-tier
+
+# 6. Punch it, Chewie!
 RALPH_PROJECT_DIR=./.projects/my-project docker compose run --rm ralph
 ```
 
