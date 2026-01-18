@@ -228,9 +228,9 @@ export function createConfirmModal(
     options.onConfirm();
   });
 
-  // Tab between buttons
+  // Tab between buttons - track focus via screen.focused
   modal.key(["tab"], () => {
-    if (confirmBtn.focused) {
+    if (screen.focused === confirmBtn) {
       cancelBtn.focus();
     } else {
       confirmBtn.focus();

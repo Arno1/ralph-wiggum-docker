@@ -332,21 +332,27 @@ export class BlessedTUIApp {
 
   private removeProjectListKeyHandlers(): void {
     for (const [keys, handler] of this.projectListKeyHandlers) {
-      this.screen.unkey(keys.split(","), handler as any);
+      for (const key of keys.split(",")) {
+        this.screen.unkey(key, handler as any);
+      }
     }
     this.projectListKeyHandlers.clear();
   }
 
   private removeProjectDetailKeyHandlers(): void {
     for (const [keys, handler] of this.projectDetailKeyHandlers) {
-      this.screen.unkey(keys.split(","), handler as any);
+      for (const key of keys.split(",")) {
+        this.screen.unkey(key, handler as any);
+      }
     }
     this.projectDetailKeyHandlers.clear();
   }
 
   private removeConfigEditorKeyHandlers(): void {
     for (const [keys, handler] of this.configEditorKeyHandlers) {
-      this.screen.unkey(keys.split(","), handler as any);
+      for (const key of keys.split(",")) {
+        this.screen.unkey(key, handler as any);
+      }
     }
     this.configEditorKeyHandlers.clear();
   }
