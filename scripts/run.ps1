@@ -22,8 +22,8 @@ $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Pa
 Push-Location $ProjectRoot
 
 try {
-    $ProjectDir = ".projects\$Project"
-    $ConfigFile = "$ProjectDir\config.json"
+    $ProjectDir = "./.projects/$Project"
+    $ConfigFile = "$ProjectDir/config.json"
 
     # Check for config
     if (-not (Test-Path $ConfigFile)) {
