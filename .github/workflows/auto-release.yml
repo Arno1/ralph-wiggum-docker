@@ -36,6 +36,8 @@ jobs:
 
       - name: Check for release-worthy commits
         id: check
+        env:
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
         run: |
           # Get commits in this PR (compare to main)
           COMMITS=$(git log origin/main..HEAD --pretty=format:"%s" --no-merges)
@@ -49,40 +51,32 @@ jobs:
           echo "Commits in PR:"
           echo "$COMMITS"
 
-          # Check for breaking changes (major bump)
-          if echo "$COMMITS" | grep -qE "^.*!:|BREAKING CHANGE"; then
-            echo "Found breaking changes - major bump"
-            echo "should_release=true" >> $GITHUB_OUTPUT
+          # Check for release-worthy commits (any of: feat, fix, docs, refactor, perf)
+          if ! echo "$COMMITS" | grep -qE "^(feat|fix|docs|refactor|perf)(\(.+\))?:"; then
+            echo "No release-worthy commits (only chore/ci/test/build)"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "should_release=true" >> $GITHUB_OUTPUT
+
+          # Check PR labels for manual version control
+          # Labels: release:major, release:minor (default: patch)
+          if echo "$PR_LABELS" | grep -q "release:major"; then
+            echo "Label 'release:major' found - major bump"
             echo "bump_type=major" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Check for features (minor bump)
-          if echo "$COMMITS" | grep -qE "^feat(\(.+\))?:"; then
-            echo "Found new features - minor bump"
-            echo "should_release=true" >> $GITHUB_OUTPUT
+          if echo "$PR_LABELS" | grep -q "release:minor"; then
+            echo "Label 'release:minor' found - minor bump"
             echo "bump_type=minor" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Check for fixes (patch bump)
-          if echo "$COMMITS" | grep -qE "^fix(\(.+\))?:"; then
-            echo "Found fixes - patch bump"
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "bump_type=patch" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Check for other releasable changes (docs, refactor, perf)
-          if echo "$COMMITS" | grep -qE "^(refactor|perf|docs)(\(.+\))?:"; then
-            echo "Found releasable changes - patch bump"
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "bump_type=patch" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          echo "No release-worthy commits (only chore/ci/test/build)"
-          echo "should_release=false" >> $GITHUB_OUTPUT
+          # Default to patch for all release-worthy commits
+          echo "No version label - defaulting to patch bump"
+          echo "bump_type=patch" >> $GITHUB_OUTPUT
 
       - name: Get current version
         if: steps.check.outputs.should_release == 'true'
@@ -149,51 +143,61 @@ jobs:
           mv package.json.tmp package.json
           echo "Updated package.json to $NEW_VERSION"
 
-      - name: Generate changelog entry
+      - name: Generate changelog entries
         if: steps.check.outputs.should_release == 'true' && steps.skip.outputs.skip != 'true'
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
           TODAY=$(date +%Y-%m-%d)
+          PR_TITLE="${{ github.event.pull_request.title }}"
 
-          # Generate categorized changelog from PR commits
-          > /tmp/changelog_entry.md
+          mkdir -p docs
+
+          # Generate DETAILED changelog from PR commits (for docs/)
+          > /tmp/changelog_detailed.md
 
           # Added (feat)
           ADDED=$(git log origin/main..HEAD --pretty=format:"%s" --no-merges | grep -iE "^feat(\(.+\))?:" | sed 's/^[^:]*: /- /' || true)
           if [ -n "$ADDED" ]; then
-            echo "### Added" >> /tmp/changelog_entry.md
-            echo "$ADDED" >> /tmp/changelog_entry.md
-            echo "" >> /tmp/changelog_entry.md
+            echo "### Added" >> /tmp/changelog_detailed.md
+            echo "$ADDED" >> /tmp/changelog_detailed.md
+            echo "" >> /tmp/changelog_detailed.md
           fi
 
           # Changed (refactor, perf)
           CHANGED=$(git log origin/main..HEAD --pretty=format:"%s" --no-merges | grep -iE "^(refactor|perf)(\(.+\))?:" | sed 's/^[^:]*: /- /' || true)
           if [ -n "$CHANGED" ]; then
-            echo "### Changed" >> /tmp/changelog_entry.md
-            echo "$CHANGED" >> /tmp/changelog_entry.md
-            echo "" >> /tmp/changelog_entry.md
+            echo "### Changed" >> /tmp/changelog_detailed.md
+            echo "$CHANGED" >> /tmp/changelog_detailed.md
+            echo "" >> /tmp/changelog_detailed.md
           fi
 
           # Fixed
           FIXED=$(git log origin/main..HEAD --pretty=format:"%s" --no-merges | grep -iE "^fix(\(.+\))?:" | sed 's/^[^:]*: /- /' || true)
           if [ -n "$FIXED" ]; then
-            echo "### Fixed" >> /tmp/changelog_entry.md
-            echo "$FIXED" >> /tmp/changelog_entry.md
-            echo "" >> /tmp/changelog_entry.md
+            echo "### Fixed" >> /tmp/changelog_detailed.md
+            echo "$FIXED" >> /tmp/changelog_detailed.md
+            echo "" >> /tmp/changelog_detailed.md
           fi
 
           # Docs
           DOCS=$(git log origin/main..HEAD --pretty=format:"%s" --no-merges | grep -iE "^docs(\(.+\))?:" | sed 's/^[^:]*: /- /' || true)
           if [ -n "$DOCS" ]; then
-            echo "### Documentation" >> /tmp/changelog_entry.md
-            echo "$DOCS" >> /tmp/changelog_entry.md
-            echo "" >> /tmp/changelog_entry.md
+            echo "### Documentation" >> /tmp/changelog_detailed.md
+            echo "$DOCS" >> /tmp/changelog_detailed.md
+            echo "" >> /tmp/changelog_detailed.md
           fi
 
-          echo "Generated changelog entry:"
-          cat /tmp/changelog_entry.md
+          # Generate SUMMARY changelog (for root CHANGELOG.md)
+          # Just the PR title as a one-liner
+          > /tmp/changelog_summary.md
+          echo "- ${PR_TITLE}" >> /tmp/changelog_summary.md
 
-      - name: Update CHANGELOG.md
+          echo "=== Detailed changelog ==="
+          cat /tmp/changelog_detailed.md
+          echo "=== Summary changelog ==="
+          cat /tmp/changelog_summary.md
+
+      - name: Update CHANGELOG.md (summary)
         if: steps.check.outputs.should_release == 'true' && steps.skip.outputs.skip != 'true'
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
@@ -206,12 +210,12 @@ jobs:
             exit 0
           fi
 
-          # Create the new entry
+          # Create the new entry (summary only - just PR title)
           cat > /tmp/new_section.md << EOF
-          ## [$NEW_VERSION] - $TODAY
+## [$NEW_VERSION] - $TODAY
 
-          $(cat /tmp/changelog_entry.md)
-          EOF
+$(cat /tmp/changelog_summary.md)
+EOF
 
           # Insert new section after line 7
           {
@@ -228,18 +232,67 @@ jobs:
             echo "[$NEW_VERSION]: https://github.com/${{ github.repository }}/compare/v${PREV_VERSION}...v${NEW_VERSION}" >> CHANGELOG.md
           fi
 
+      - name: Update docs/CHANGELOG-DETAILED.md
+        if: steps.check.outputs.should_release == 'true' && steps.skip.outputs.skip != 'true'
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          PREV_VERSION="${{ steps.current.outputs.version }}"
+          TODAY=$(date +%Y-%m-%d)
+
+          mkdir -p docs
+
+          # Create docs/CHANGELOG-DETAILED.md if it doesn't exist
+          if [ ! -f docs/CHANGELOG-DETAILED.md ]; then
+            cat > docs/CHANGELOG-DETAILED.md << 'EOF'
+# Detailed Changelog
+
+Full changelog with categorized changes from all commits.
+
+For a summary, see [CHANGELOG.md](../CHANGELOG.md).
+
+EOF
+          fi
+
+          # Check if this version already in detailed changelog
+          if grep -q "## \[$NEW_VERSION\]" docs/CHANGELOG-DETAILED.md; then
+            echo "Version $NEW_VERSION already in detailed changelog, skipping"
+            exit 0
+          fi
+
+          # Create the new detailed entry
+          cat > /tmp/new_detailed_section.md << EOF
+## [$NEW_VERSION] - $TODAY
+
+$(cat /tmp/changelog_detailed.md)
+EOF
+
+          # Insert after header (line 6)
+          {
+            head -n 6 docs/CHANGELOG-DETAILED.md
+            echo ""
+            cat /tmp/new_detailed_section.md
+            tail -n +7 docs/CHANGELOG-DETAILED.md
+          } > docs/CHANGELOG-DETAILED.tmp.md
+
+          mv docs/CHANGELOG-DETAILED.tmp.md docs/CHANGELOG-DETAILED.md
+
+          # Add version link
+          if ! grep -q "^\[$NEW_VERSION\]:" docs/CHANGELOG-DETAILED.md; then
+            echo "[$NEW_VERSION]: https://github.com/${{ github.repository }}/compare/v${PREV_VERSION}...v${NEW_VERSION}" >> docs/CHANGELOG-DETAILED.md
+          fi
+
       - name: Commit and push version update
         if: steps.check.outputs.should_release == 'true' && steps.skip.outputs.skip != 'true'
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
 
           # Check if there are changes to commit
-          if git diff --quiet package.json CHANGELOG.md; then
+          if git diff --quiet package.json CHANGELOG.md docs/CHANGELOG-DETAILED.md 2>/dev/null; then
             echo "No changes to commit"
             exit 0
           fi
 
-          git add package.json CHANGELOG.md
+          git add package.json CHANGELOG.md docs/CHANGELOG-DETAILED.md
           git commit -m "chore(release): bump to v${NEW_VERSION} [skip ci]"
           git push origin HEAD:${{ github.head_ref }}
 
