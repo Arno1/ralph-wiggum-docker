@@ -2,10 +2,10 @@
 # run.sh - Launch Ralph Loop worker for a project
 #
 # Usage:
-#   .claude/skills/orchestrator/scripts/run.sh <project-name>
-#   .claude/skills/orchestrator/scripts/run.sh <project-name> --background
-#   .claude/skills/orchestrator/scripts/run.sh <project-name> --unlimited
-#   .claude/skills/orchestrator/scripts/run.sh <project-name> --auth anthropic-oauth
+#   .claude/skills/manage-project/scripts/run.sh <project-name>
+#   .claude/skills/manage-project/scripts/run.sh <project-name> --background
+#   .claude/skills/manage-project/scripts/run.sh <project-name> --unlimited
+#   .claude/skills/manage-project/scripts/run.sh <project-name> --auth anthropic-oauth
 #
 # Examples:
 #   ./run.sh ralph-cli
@@ -87,9 +87,9 @@ if [ -z "$PROJECT" ]; then
 fi
 
 # Get script directory and project root
-# scripts -> orchestrator -> skills -> .claude -> PROJECT_ROOT (4 levels up)
+# scripts -> manage-project -> skills -> .claude -> PROJECT_ROOT (3 levels up)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 PROJECT_DIR="./.projects/$PROJECT"

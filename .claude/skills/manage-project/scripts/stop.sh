@@ -2,8 +2,8 @@
 # stop.sh - Stop a running Ralph Loop worker
 #
 # Usage:
-#   .claude/skills/orchestrator/scripts/stop.sh <project-name>
-#   .claude/skills/orchestrator/scripts/stop.sh --all
+#   .claude/skills/manage-project/scripts/stop.sh <project-name>
+#   .claude/skills/manage-project/scripts/stop.sh --all
 
 set -e
 

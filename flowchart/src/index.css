@@ -5,11 +5,11 @@
   --sw-gold: #FFE81F;
   --sw-gold-dim: #c4b200;
   --sw-blue: #00D4FF;
-  --sw-blue-dim: #0099bb;
+  --sw-blue-dim: #0099bb; /* Reserved for future use */
   --sw-red: #FF6B6B;
-  --sw-red-bright: #ff4444;
+  --sw-red-bright: #ff4444; /* Reserved for future use */
   --sw-green: #00FF41;
-  --sw-purple: #9d4edd;
+  --sw-purple: #9d4edd; /* Reserved for future use */
   --sw-text: #e8e8e8;
   --sw-text-dim: #8888aa;
 

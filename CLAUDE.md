@@ -337,6 +337,26 @@ ralph-wiggum-docker-loop/
 - No files > 300 lines
 - No functions > 50 lines
 
+### Docker Safety
+
+**NEVER stop a Docker container without first verifying the correct container/project instance:**
+
+```bash
+# 1. ALWAYS list running containers first
+docker ps --filter "name=ralph"
+
+# 2. Identify the specific container by project name
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Command}}"
+
+# 3. Stop ONLY the specific container
+docker stop <container-name>
+
+# Or stop by project directory match
+docker ps --filter "name=ralph" --format "{{.Names}}" | grep "<project-name>"
+```
+
+**Why:** Multiple Ralph projects can run in parallel. Stopping the wrong container kills another user's work.
+
 ## Testing
 
 Run the Docker test suite to validate all configurations:
@@ -410,7 +430,8 @@ $env:RALPH_PROJECT_DIR="./.projects/project-b"; docker compose run --rm ralph
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `RALPH_CLI` | `claude` | Builder CLI backend |
+| `RALPH_BUILDER_BACKEND` | `claude` | Builder CLI backend |
+| `RALPH_BUILDER_MODEL` | (none) | Builder model override |
 | `RALPH_MODEL` | (none) | Model override (opus, sonnet, haiku) |
 | `RALPH_SESSION_MODE` | `fresh` | Session mode |
 
@@ -421,6 +442,7 @@ $env:RALPH_PROJECT_DIR="./.projects/project-b"; docker compose run --rm ralph
 | `RALPH_REVIEWER_ENABLED` | `false` | Enable reviewer |
 | `RALPH_REVIEWER_BACKEND` | `claude` | Reviewer CLI |
 | `RALPH_REVIEWER_AUTH_MODE` | `anthropic-oauth` | Reviewer auth |
+| `RALPH_REVIEWER_MODEL` | (none) | Reviewer model override |
 | `RALPH_REVIEWER_SESSION_MODE` | `fresh` | Session mode |
 
 ### Architect
@@ -430,6 +452,7 @@ $env:RALPH_PROJECT_DIR="./.projects/project-b"; docker compose run --rm ralph
 | `RALPH_ARCHITECT_ENABLED` | `false` | Enable architect |
 | `RALPH_ARCHITECT_BACKEND` | `gemini` | Architect CLI |
 | `RALPH_ARCHITECT_AUTH_MODE` | `gemini-oauth` | Architect auth |
+| `RALPH_ARCHITECT_MODEL` | (none) | Architect model override |
 | `RALPH_ARCHITECT_SESSION_MODE` | `resume` | Session mode |
 
 ### Escalation

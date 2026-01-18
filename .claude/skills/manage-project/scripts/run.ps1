@@ -1,14 +1,14 @@
 # run.ps1 - Launch Ralph Loop worker for a project
 #
 # Usage:
-#   .\.claude\skills\orchestrator\scripts\run.ps1 <project-name>
-#   .\.claude\skills\orchestrator\scripts\run.ps1 <project-name> -Background
-#   .\.claude\skills\orchestrator\scripts\run.ps1 <project-name> -Unlimited
-#   .\.claude\skills\orchestrator\scripts\run.ps1 <project-name> -AuthMode anthropic-oauth
+#   .\.claude\skills\manage-project\scripts\run.ps1 <project-name>
+#   .\.claude\skills\manage-project\scripts\run.ps1 <project-name> -Background
+#   .\.claude\skills\manage-project\scripts\run.ps1 <project-name> -Unlimited
+#   .\.claude\skills\manage-project\scripts\run.ps1 <project-name> -AuthMode anthropic-oauth
 #
 # Examples:
-#   .\.claude\skills\orchestrator\scripts\run.ps1 ralph-cli
-#   .\.claude\skills\orchestrator\scripts\run.ps1 ralph-cli -Background -Unlimited
+#   .\.claude\skills\manage-project\scripts\run.ps1 ralph-cli
+#   .\.claude\skills\manage-project\scripts\run.ps1 ralph-cli -Background -Unlimited
 
 param(
     [Parameter(Mandatory=$true, Position=0)]
@@ -25,11 +25,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Get project root (four levels up from scripts dir)
-# scripts -> orchestrator -> skills -> .claude -> PROJECT_ROOT
+# Get project root (three levels up from scripts dir)
+# scripts -> manage-project -> skills -> .claude -> PROJECT_ROOT
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$OrchestratorDir = Split-Path -Parent $ScriptDir
-$SkillsDir = Split-Path -Parent $OrchestratorDir
+$ManageProjectDir = Split-Path -Parent $ScriptDir
+$SkillsDir = Split-Path -Parent $ManageProjectDir
 $ClaudeDir = Split-Path -Parent $SkillsDir
 $ProjectRoot = Split-Path -Parent $ClaudeDir
 

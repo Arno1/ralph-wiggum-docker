@@ -1,8 +1,8 @@
 # stop.ps1 - Stop a running Ralph Loop worker
 #
 # Usage:
-#   .\.claude\skills\orchestrator\scripts\stop.ps1 <project-name>
-#   .\.claude\skills\orchestrator\scripts\stop.ps1 --all
+#   .\.claude\skills\manage-project\scripts\stop.ps1 <project-name>
+#   .\.claude\skills\manage-project\scripts\stop.ps1 --all
 
 param(
     [Parameter(Position=0)]
