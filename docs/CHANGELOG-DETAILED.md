@@ -5,6 +5,46 @@ Full changelog with categorized changes from all commits.
 For a summary, see [CHANGELOG.md](../CHANGELOG.md).
 
 
+## [0.1.12] - 2026-01-18
+
+### Added
+- Enhance log-tailer and project-status utilities
+- Add blessed-based TUI framework
+- Add task specification templates
+- Integrate dashboard into TUI app and CLI
+- Add dashboard state and screen components
+- Add utilities for project status and log tailing
+- Add Bun runtime to Docker image
+- Add role customization and apply progressive disclosure
+- Add role prompt customization support to loop-prompt-writer
+
+### Changed
+- Update entry point to support blessed and legacy TUI
+- Use tag-based changelog instead of PR refs
+- Move version bump to merge time instead of PR open
+- Cleanup launcher scripts and improve documentation
+
+### Fixed
+- Create release PRs instead of pushing directly to main
+- Use PAT token to bypass branch protection in auto-release
+- Upgrade xml2js to 0.5.0 to fix CVE-2023-0842
+- Resolve TypeScript errors in blessed components
+- Fix CLI tests to check for actual task files, not just directory
+- Fix SCRIPT_DIR path resolution issues in ralph.sh and phases.sh
+- Fix auto-release workflow for tag-based changelog (#26)
+- Improve tag creation reliability in auto-release
+- Use PR base/head SHAs instead of merge commit parents
+- Apply oxfmt formatting to all source files
+- Use bun run format instead of bunx for consistency
+- Resolve shellcheck warnings and auto-release version bumping
+- Pin Bun version to 1.3.5 to fix lockfile consistency
+- Improve light mode visibility for typing effect and quote SVG
+
+### Documentation
+- Simplify release workflow documentation
+- Migrate to Bun, add cross-platform run support, and fix entrypoint paths
+
+
 ## [0.1.11] - 2026-01-18
 
 ### Fixed
@@ -136,3 +176,4 @@ Initial release.
 [0.1.9]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.8...v0.1.9
 [0.1.10]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.9...v0.1.10
 [0.1.11]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.10...v0.1.11
+[0.1.12]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.11...v0.1.12
