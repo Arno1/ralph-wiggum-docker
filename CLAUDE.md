@@ -383,6 +383,41 @@ Tests all auth modes (glm, anthropic-oauth, anthropic-api, gemini-oauth, etc.), 
 
 Tests all CLI commands: new, list, show, delete, validate, and display modes.
 
+## Release Workflow
+
+This project uses automated semantic versioning with conventional commits.
+
+### How It Works
+
+1. **Create a PR** with conventional commit messages (`feat:`, `fix:`, `docs:`, etc.)
+2. **Auto-release workflow** runs and:
+   - Detects release-worthy commits
+   - Bumps version (defaults to **patch**)
+   - Updates `CHANGELOG.md` (summary) and `docs/CHANGELOG-DETAILED.md` (full)
+   - Commits changes back to the PR branch
+3. **Merge the PR** - tag and GitHub release are created automatically
+
+### Version Bumps
+
+| Bump | When | How to Trigger |
+|------|------|----------------|
+| **Patch** (0.0.X) | Default for any fix/feat/docs | Automatic |
+| **Minor** (0.X.0) | New features, breaking changes to minor APIs | Add `release:minor` label to PR |
+| **Major** (X.0.0) | Breaking changes, major rewrites | Add `release:major` label to PR |
+
+### Important
+
+- **Always confirm with the user** before adding `release:minor` or `release:major` labels
+- Patches are automatic - no confirmation needed
+- The workflow will NOT run for `chore:`, `ci:`, `test:`, or `build:` commits only
+
+### Changelogs
+
+| File | Purpose |
+|------|---------|
+| `CHANGELOG.md` | Summary (PR title only) |
+| `docs/CHANGELOG-DETAILED.md` | Full categorized changes |
+
 ## Usage
 
 ### Linux/Mac (Bash)
