@@ -56,14 +56,18 @@ test_backend() {
 
     # Test with thinking hidden
     echo "  Testing with RALPH_SHOW_THINKING=false..."
-    local output_hidden=$(head -50 "$sample" | jq -r --arg show_thinking "false" -f "$FILTER" 2>&1)
-    local count_hidden=$(echo "$output_hidden" | grep -c . || echo 0)
+    local output_hidden
+    output_hidden=$(head -50 "$sample" | jq -r --arg show_thinking "false" -f "$FILTER" 2>&1)
+    local count_hidden
+    count_hidden=$(echo "$output_hidden" | grep -c . || echo 0)
     echo "    Output lines: $count_hidden"
 
     # Test with thinking shown
     echo "  Testing with RALPH_SHOW_THINKING=true..."
-    local output_shown=$(head -50 "$sample" | jq -r --arg show_thinking "true" -f "$FILTER" 2>&1)
-    local count_shown=$(echo "$output_shown" | grep -c . || echo 0)
+    local output_shown
+    output_shown=$(head -50 "$sample" | jq -r --arg show_thinking "true" -f "$FILTER" 2>&1)
+    local count_shown
+    count_shown=$(echo "$output_shown" | grep -c . || echo 0)
     echo "    Output lines: $count_shown"
 
     # Show sample output
