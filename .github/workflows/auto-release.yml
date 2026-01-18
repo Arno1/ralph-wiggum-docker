@@ -34,12 +34,11 @@ jobs:
         id: check
         env:
           PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          # Get the merge commit
-          MERGE_COMMIT="${{ github.event.pull_request.merge_commit_sha }}"
-
-          # Get commits from the merged PR
-          COMMITS=$(git log --pretty=format:"%s" --no-merges $MERGE_COMMIT^2 ^$MERGE_COMMIT^1)
+          # Get commits from the merged PR (between base and head)
+          COMMITS=$(git log --pretty=format:"%s" --no-merges ${BASE_SHA}..${HEAD_SHA})
 
           if [ -z "$COMMITS" ]; then
             echo "No commits in merged PR"
@@ -130,19 +129,21 @@ jobs:
 
       - name: Generate changelog entries
         if: steps.check.outputs.should_release == 'true'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
           TODAY=$(date +%Y-%m-%d)
           PR_TITLE="${{ github.event.pull_request.title }}"
-          MERGE_COMMIT="${{ github.event.pull_request.merge_commit_sha }}"
 
           mkdir -p docs
 
           # Generate DETAILED changelog from PR commits (for docs/)
           > /tmp/changelog_detailed.md
 
-          # Get commits from merged PR
-          COMMITS=$(git log --pretty=format:"%s" --no-merges $MERGE_COMMIT^2 ^$MERGE_COMMIT^1)
+          # Get commits from merged PR (between base and head)
+          COMMITS=$(git log --pretty=format:"%s" --no-merges ${BASE_SHA}..${HEAD_SHA})
 
           # Added (feat)
           ADDED=$(echo "$COMMITS" | grep -iE "^feat(\(.+\))?:" | sed 's/^[^:]*: /- /' || true)
