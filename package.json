@@ -1,6 +1,6 @@
 {
     "name": "ralph-terminal",
-    "version": "1.0.0",
+    "version": "0.1.1",
     "description": "TUI dashboard and project configurator for ralph-wiggum-docker-loop",
     "type": "module",
     "main": "dist/cli/index.js",
@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.7.2"
+        "typescript": "~5.7.3"
     },
     "engines": {
         "node": ">=20.0.0"
