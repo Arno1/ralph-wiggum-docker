@@ -142,7 +142,10 @@ export function createProjectDetailStatusBar(
             ? `{${BLESSED_COLORS.error}-fg}✕{/}`
             : `{${BLESSED_COLORS.muted}-fg}○{/}`;
 
-    const parts = [`{${BLESSED_COLORS.shell}-fg}${project.name}{/}`, `${statusIcon} ${project.status}`];
+    const parts = [
+      `{${BLESSED_COLORS.shell}-fg}${project.name}{/}`,
+      `${statusIcon} ${project.status}`,
+    ];
 
     if (project.iteration !== null) {
       parts.push(`{${BLESSED_COLORS.muted}-fg}Iter ${project.iteration}/∞{/}`);
@@ -196,7 +199,10 @@ export function updateProjectDetailStatusBar(
             ? `{${BLESSED_COLORS.error}-fg}✕{/}`
             : `{${BLESSED_COLORS.muted}-fg}○{/}`;
 
-    const parts = [`{${BLESSED_COLORS.shell}-fg}${project.name}{/}`, `${statusIcon} ${project.status}`];
+    const parts = [
+      `{${BLESSED_COLORS.shell}-fg}${project.name}{/}`,
+      `${statusIcon} ${project.status}`,
+    ];
 
     if (project.iteration !== null) {
       parts.push(`{${BLESSED_COLORS.muted}-fg}Iter ${project.iteration}/∞{/}`);

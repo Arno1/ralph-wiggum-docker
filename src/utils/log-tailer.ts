@@ -37,7 +37,8 @@ export function getLogPath(projectName: string): string | null {
   if (!fs.existsSync(logsDir)) return null;
 
   try {
-    const iterations = fs.readdirSync(logsDir)
+    const iterations = fs
+      .readdirSync(logsDir)
       .filter((d) => d.startsWith("iteration_"))
       .sort()
       .reverse();

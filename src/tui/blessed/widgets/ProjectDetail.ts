@@ -122,10 +122,7 @@ export class ProjectDetailContainer {
     this.createHeader();
 
     // Create tab bar
-    this.tabBar = createTabBar(
-      { parent: this.screen, top: 2 },
-      state.detailTab || "overview",
-    );
+    this.tabBar = createTabBar({ parent: this.screen, top: 2 }, state.detailTab || "overview");
 
     // Create content area
     this.contentArea = blessed.box({
@@ -212,7 +209,9 @@ export class ProjectDetailContainer {
     // Status row - fixed width columns for alignment
     const statusIcon = getStatusIcon(this.project.status);
     const statusText = this.project.status.toUpperCase().padEnd(12);
-    const providerBadge = this.project.provider ? formatProviderBadge(this.project.provider) : `{${BLESSED_COLORS.muted}-fg}-{/}`;
+    const providerBadge = this.project.provider
+      ? formatProviderBadge(this.project.provider)
+      : `{${BLESSED_COLORS.muted}-fg}-{/}`;
     lines.push(
       `{${BLESSED_COLORS.coral}-fg}STATUS:{/}     ${statusIcon} ${statusText}    {${BLESSED_COLORS.coral}-fg}PROVIDER:{/}   ${providerBadge}`,
     );
@@ -237,18 +236,27 @@ export class ProjectDetailContainer {
         totalTasks += phase.tasks.length;
       }
 
-      const currentPhase = this.project.taskProgress?.currentPhase || this.phases[0]?.name || "unknown";
+      const currentPhase =
+        this.project.taskProgress?.currentPhase || this.phases[0]?.name || "unknown";
       const bar = formatProgressBar(totalCompleted, totalTasks, 30);
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Overall:{/} ${bar} {${BLESSED_COLORS.muted}-fg}(${totalCompleted}/${totalTasks} tasks){/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Overall:{/} ${bar} {${BLESSED_COLORS.muted}-fg}(${totalCompleted}/${totalTasks} tasks){/}`,
+      );
       lines.push("");
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Current Phase:{/} {${BLESSED_COLORS.info}-fg}${currentPhase}{/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Current Phase:{/} {${BLESSED_COLORS.info}-fg}${currentPhase}{/}`,
+      );
     } else if (this.project.taskProgress && this.project.taskProgress.total > 0) {
       // Fallback to summary.json if no phases loaded
       const { completed, total, currentPhase } = this.project.taskProgress;
       const bar = formatProgressBar(completed, total, 30);
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Overall:{/} ${bar} {${BLESSED_COLORS.muted}-fg}(${completed}/${total} tasks){/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Overall:{/} ${bar} {${BLESSED_COLORS.muted}-fg}(${completed}/${total} tasks){/}`,
+      );
       lines.push("");
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Current Phase:{/} {${BLESSED_COLORS.info}-fg}${currentPhase}{/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Current Phase:{/} {${BLESSED_COLORS.info}-fg}${currentPhase}{/}`,
+      );
     } else {
       lines.push(`{${BLESSED_COLORS.muted}-fg}No task progress data available{/}`);
     }
@@ -284,7 +292,9 @@ export class ProjectDetailContainer {
     }
 
     if (currentTask) {
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Task ${currentTask.id}:{/} {${BLESSED_COLORS.info}-fg}${currentTask.name}{/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Task ${currentTask.id}:{/} {${BLESSED_COLORS.info}-fg}${currentTask.name}{/}`,
+      );
       lines.push(
         `{${BLESSED_COLORS.cream}-fg}Provider:{/} ${formatProviderBadge(currentTask.provider)}  {${BLESSED_COLORS.cream}-fg}Complexity:{/} ${formatComplexityBadge(currentTask.complexity)}  {${BLESSED_COLORS.cream}-fg}Status:{/} ${formatStatusBadge("in_progress")}`,
       );
@@ -598,31 +608,53 @@ export class ProjectDetailContainer {
     const lines: string[] = [];
 
     lines.push(`{${BLESSED_COLORS.coral}-fg}{bold}PROJECT{/bold}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Name:{/}        {${BLESSED_COLORS.shell}-fg}${config.name || this.project.name}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Description:{/} {${BLESSED_COLORS.muted}-fg}${config.description || this.project.description}{/}`);
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Name:{/}        {${BLESSED_COLORS.shell}-fg}${config.name || this.project.name}{/}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Description:{/} {${BLESSED_COLORS.muted}-fg}${config.description || this.project.description}{/}`,
+    );
     lines.push("");
 
     lines.push(`{${BLESSED_COLORS.coral}-fg}{bold}BUILDER{/bold}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Backend:{/}   {${BLESSED_COLORS.info}-fg}${config.builder?.backend || this.project.provider || "-"}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Auth Mode:{/} {${BLESSED_COLORS.muted}-fg}${config.builder?.auth_mode || "-"}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Model:{/}     {${BLESSED_COLORS.muted}-fg}${config.builder?.model || this.project.model || "-"}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Session:{/}   {${BLESSED_COLORS.muted}-fg}${config.builder?.session_mode || "-"}{/}`);
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Backend:{/}   {${BLESSED_COLORS.info}-fg}${config.builder?.backend || this.project.provider || "-"}{/}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Auth Mode:{/} {${BLESSED_COLORS.muted}-fg}${config.builder?.auth_mode || "-"}{/}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Model:{/}     {${BLESSED_COLORS.muted}-fg}${config.builder?.model || this.project.model || "-"}{/}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Session:{/}   {${BLESSED_COLORS.muted}-fg}${config.builder?.session_mode || "-"}{/}`,
+    );
     lines.push("");
 
     lines.push(`{${BLESSED_COLORS.coral}-fg}{bold}REVIEWER{/bold}{/}`);
     if (config.reviewer?.enabled) {
       lines.push(`{${BLESSED_COLORS.cream}-fg}Enabled:{/}  {${BLESSED_COLORS.success}-fg}Yes{/}`);
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Backend:{/}  {${BLESSED_COLORS.info}-fg}${config.reviewer.backend || "-"}{/}`);
-      lines.push(`{${BLESSED_COLORS.cream}-fg}Model:{/}    {${BLESSED_COLORS.muted}-fg}${config.reviewer.model || "-"}{/}`);
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Backend:{/}  {${BLESSED_COLORS.info}-fg}${config.reviewer.backend || "-"}{/}`,
+      );
+      lines.push(
+        `{${BLESSED_COLORS.cream}-fg}Model:{/}    {${BLESSED_COLORS.muted}-fg}${config.reviewer.model || "-"}{/}`,
+      );
     } else {
       lines.push(`{${BLESSED_COLORS.cream}-fg}Enabled:{/}  {${BLESSED_COLORS.muted}-fg}No{/}`);
     }
     lines.push("");
 
     lines.push(`{${BLESSED_COLORS.coral}-fg}{bold}LOOP SETTINGS{/bold}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Max Iterations:{/}       {${BLESSED_COLORS.muted}-fg}${config.max_iterations === 0 ? "∞ (unlimited)" : config.max_iterations}{/}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Completion Detection:{/} ${config.completion_enabled ? `{${BLESSED_COLORS.success}-fg}Yes{/}` : `{${BLESSED_COLORS.muted}-fg}No{/}`}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Escalation:{/}           ${config.escalation?.enabled ? `{${BLESSED_COLORS.success}-fg}Yes{/}` : `{${BLESSED_COLORS.muted}-fg}No{/}`}`);
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Max Iterations:{/}       {${BLESSED_COLORS.muted}-fg}${config.max_iterations === 0 ? "∞ (unlimited)" : config.max_iterations}{/}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Completion Detection:{/} ${config.completion_enabled ? `{${BLESSED_COLORS.success}-fg}Yes{/}` : `{${BLESSED_COLORS.muted}-fg}No{/}`}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Escalation:{/}           ${config.escalation?.enabled ? `{${BLESSED_COLORS.success}-fg}Yes{/}` : `{${BLESSED_COLORS.muted}-fg}No{/}`}`,
+    );
     lines.push("");
 
     lines.push(`{${BLESSED_COLORS.info}-fg}Press Enter or 'e' to edit config{/}`);
@@ -784,16 +816,26 @@ export class ProjectDetailContainer {
     if (!selectedTask) return;
 
     const lines: string[] = [];
-    lines.push(`{${BLESSED_COLORS.coral}-fg}{bold}TASK ${selectedTask.id}: ${selectedTask.name}{/bold}{/}`);
+    lines.push(
+      `{${BLESSED_COLORS.coral}-fg}{bold}TASK ${selectedTask.id}: ${selectedTask.name}{/bold}{/}`,
+    );
     lines.push("");
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Status:{/}     ${formatStatusBadge(selectedTask.status)}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Provider:{/}   ${formatProviderBadge(selectedTask.provider)}`);
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Complexity:{/} ${formatComplexityBadge(selectedTask.complexity)}`);
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Status:{/}     ${formatStatusBadge(selectedTask.status)}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Provider:{/}   ${formatProviderBadge(selectedTask.provider)}`,
+    );
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Complexity:{/} ${formatComplexityBadge(selectedTask.complexity)}`,
+    );
     lines.push("");
     lines.push(`{${BLESSED_COLORS.coral}-fg}Description{/}`);
     lines.push(selectedTask.description);
     lines.push("");
-    lines.push(`{${BLESSED_COLORS.cream}-fg}Dependencies:{/} {${BLESSED_COLORS.muted}-fg}${selectedTask.depends_on.length > 0 ? selectedTask.depends_on.join(", ") : "None"}{/}`);
+    lines.push(
+      `{${BLESSED_COLORS.cream}-fg}Dependencies:{/} {${BLESSED_COLORS.muted}-fg}${selectedTask.depends_on.length > 0 ? selectedTask.depends_on.join(", ") : "None"}{/}`,
+    );
 
     if (selectedTask.acceptance_criteria && selectedTask.acceptance_criteria.length > 0) {
       lines.push("");

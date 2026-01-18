@@ -10,10 +10,7 @@ import { BACKENDS } from "../../../config/schema.js";
 import type { AppState, TabName } from "../../state.js";
 import { getFieldCount } from "../../state.js";
 import { BLESSED_COLORS, formatDecorativeHeader } from "../theme.js";
-import {
-  createConfigEditorTabBar,
-  updateConfigEditorTabBar,
-} from "./ConfigEditorTabBar.js";
+import { createConfigEditorTabBar, updateConfigEditorTabBar } from "./ConfigEditorTabBar.js";
 
 export interface ConfigEditorOptions {
   parent: blessed.Widgets.Screen;
@@ -64,10 +61,7 @@ export class ConfigEditorContainer {
     });
 
     // Create tab bar
-    this.tabBar = createConfigEditorTabBar(
-      { parent: this.screen, top: 3 },
-      state.activeTab,
-    );
+    this.tabBar = createConfigEditorTabBar({ parent: this.screen, top: 3 }, state.activeTab);
 
     // Create content area
     this.contentArea = blessed.box({
@@ -154,7 +148,11 @@ export class ConfigEditorContainer {
         this.descInput.focus();
         this.descInput.readInput();
       }
-    } else if (this.state.activeTab === "loop" && this.state.focusedField === 0 && this.maxIterInput) {
+    } else if (
+      this.state.activeTab === "loop" &&
+      this.state.focusedField === 0 &&
+      this.maxIterInput
+    ) {
       this.maxIterInput.focus();
       this.maxIterInput.readInput();
     }
@@ -340,10 +338,12 @@ export class ConfigEditorContainer {
     const prefix = isFocused ? `{${BLESSED_COLORS.coral}-fg}> {/}` : "  ";
     const arrow = isOpen ? "\u25BC" : "\u25B6";
 
-    const selectedItem = items.find(i => i.id === selected);
+    const selectedItem = items.find((i) => i.id === selected);
     const displayValue = selectedItem?.label || selected;
 
-    lines.push(`${prefix}{${BLESSED_COLORS.muted}-fg}${label}:{/} ${displayValue} {${BLESSED_COLORS.muted}-fg}${arrow}{/}`);
+    lines.push(
+      `${prefix}{${BLESSED_COLORS.muted}-fg}${label}:{/} ${displayValue} {${BLESSED_COLORS.muted}-fg}${arrow}{/}`,
+    );
 
     if (isOpen) {
       for (const item of items) {
@@ -446,8 +446,8 @@ export class ConfigEditorContainer {
    * Builder tab - backend and auth
    */
   private renderBuilderTab(): void {
-    const backend = BACKENDS.find(b => b.id === this.state.config.builder.backend);
-    const authModes = backend?.authModes.map(am => ({ id: am, label: am })) || [];
+    const backend = BACKENDS.find((b) => b.id === this.state.config.builder.backend);
+    const authModes = backend?.authModes.map((am) => ({ id: am, label: am })) || [];
 
     const lines: string[] = [
       "",
@@ -476,16 +476,23 @@ export class ConfigEditorContainer {
       "",
       `{${BLESSED_COLORS.coral}-fg}REVIEWER CONFIGURATION{/}`,
       "",
-      this.formatToggle("Enable Reviewer", this.state.config.reviewer.enabled, this.state.focusedField === 0),
+      this.formatToggle(
+        "Enable Reviewer",
+        this.state.config.reviewer.enabled,
+        this.state.focusedField === 0,
+      ),
       "",
     ];
 
     if (this.state.config.reviewer.enabled) {
-      const backend = BACKENDS.find(b => b.id === this.state.config.reviewer.backend);
-      const authModes = backend?.authModes.map(am => ({ id: am, label: am })) || [];
+      const backend = BACKENDS.find((b) => b.id === this.state.config.reviewer.backend);
+      const authModes = backend?.authModes.map((am) => ({ id: am, label: am })) || [];
 
       lines.push(
-        ...this.formatProviderCards(this.state.config.reviewer.backend, this.state.focusedField === 1),
+        ...this.formatProviderCards(
+          this.state.config.reviewer.backend,
+          this.state.focusedField === 1,
+        ),
         "",
         ...this.formatDropdown(
           "Auth Mode",
@@ -509,16 +516,23 @@ export class ConfigEditorContainer {
       "",
       `{${BLESSED_COLORS.coral}-fg}ARCHITECT CONFIGURATION{/}`,
       "",
-      this.formatToggle("Enable Architect", this.state.config.architect.enabled, this.state.focusedField === 0),
+      this.formatToggle(
+        "Enable Architect",
+        this.state.config.architect.enabled,
+        this.state.focusedField === 0,
+      ),
       "",
     ];
 
     if (this.state.config.architect.enabled) {
-      const backend = BACKENDS.find(b => b.id === this.state.config.architect.backend);
-      const authModes = backend?.authModes.map(am => ({ id: am, label: am })) || [];
+      const backend = BACKENDS.find((b) => b.id === this.state.config.architect.backend);
+      const authModes = backend?.authModes.map((am) => ({ id: am, label: am })) || [];
 
       lines.push(
-        ...this.formatProviderCards(this.state.config.architect.backend, this.state.focusedField === 1),
+        ...this.formatProviderCards(
+          this.state.config.architect.backend,
+          this.state.focusedField === 1,
+        ),
         "",
         ...this.formatDropdown(
           "Auth Mode",
@@ -550,7 +564,8 @@ export class ConfigEditorContainer {
     });
 
     // Max iterations input
-    const maxIterValue = this.state.config.max_iterations === 0 ? "" : String(this.state.config.max_iterations);
+    const maxIterValue =
+      this.state.config.max_iterations === 0 ? "" : String(this.state.config.max_iterations);
     this.maxIterInput = this.createTextInput(
       3,
       "Max Iterations",
@@ -568,7 +583,8 @@ export class ConfigEditorContainer {
     );
 
     // Field indicator for max iterations
-    const maxIterIndicator = this.state.focusedField === 0 ? `{${BLESSED_COLORS.coral}-fg}>{/}` : " ";
+    const maxIterIndicator =
+      this.state.focusedField === 0 ? `{${BLESSED_COLORS.coral}-fg}>{/}` : " ";
     blessed.box({
       parent: this.contentArea,
       top: 3,
@@ -580,8 +596,16 @@ export class ConfigEditorContainer {
     });
 
     // Toggle fields as static text
-    const completionLine = this.formatToggle("Completion Detection", this.state.config.completion_enabled, this.state.focusedField === 1);
-    const escalationLine = this.formatToggle("Escalation", this.state.config.escalation.enabled, this.state.focusedField === 2);
+    const completionLine = this.formatToggle(
+      "Completion Detection",
+      this.state.config.completion_enabled,
+      this.state.focusedField === 1,
+    );
+    const escalationLine = this.formatToggle(
+      "Escalation",
+      this.state.config.escalation.enabled,
+      this.state.focusedField === 2,
+    );
 
     blessed.box({
       parent: this.contentArea,
@@ -664,12 +688,14 @@ export class ConfigEditorContainer {
     );
 
     // Action buttons
-    const createBtn = this.state.summaryButton === 0
-      ? `{${BLESSED_COLORS.coral}-fg}[ ${action} Project ]{/}`
-      : `{${BLESSED_COLORS.muted}-fg}[ ${action} Project ]{/}`;
-    const cancelBtn = this.state.summaryButton === 1
-      ? `{${BLESSED_COLORS.coral}-fg}[ Cancel ]{/}`
-      : `{${BLESSED_COLORS.muted}-fg}[ Cancel ]{/}`;
+    const createBtn =
+      this.state.summaryButton === 0
+        ? `{${BLESSED_COLORS.coral}-fg}[ ${action} Project ]{/}`
+        : `{${BLESSED_COLORS.muted}-fg}[ ${action} Project ]{/}`;
+    const cancelBtn =
+      this.state.summaryButton === 1
+        ? `{${BLESSED_COLORS.coral}-fg}[ Cancel ]{/}`
+        : `{${BLESSED_COLORS.muted}-fg}[ Cancel ]{/}`;
 
     lines.push(`  ${createBtn}    ${cancelBtn}`, "");
 
@@ -680,7 +706,10 @@ export class ConfigEditorContainer {
    * Update status bar with current position and hints
    */
   private updateStatusBar(): void {
-    const tabIndex = ["project", "builder", "reviewer", "architect", "loop", "summary"].indexOf(this.state.activeTab) + 1;
+    const tabIndex =
+      ["project", "builder", "reviewer", "architect", "loop", "summary"].indexOf(
+        this.state.activeTab,
+      ) + 1;
     const fieldCount = getFieldCount(this.state);
     const fieldIndex = this.state.focusedField + 1;
 
@@ -696,7 +725,10 @@ export class ConfigEditorContainer {
     const infoLine = `{${BLESSED_COLORS.coral}-fg}Tab ${tabIndex}/6{/} {${BLESSED_COLORS.dimmed}-fg}|{/} {${BLESSED_COLORS.muted}-fg}Field ${fieldIndex}/${fieldCount}{/} {${BLESSED_COLORS.dimmed}-fg}|{/} {${BLESSED_COLORS.cream}-fg}${tabNames[this.state.activeTab]}{/}`;
 
     let keysLine: string;
-    if (this.state.activeTab === "project" || (this.state.activeTab === "loop" && this.state.focusedField === 0)) {
+    if (
+      this.state.activeTab === "project" ||
+      (this.state.activeTab === "loop" && this.state.focusedField === 0)
+    ) {
       keysLine = `{${BLESSED_COLORS.muted}-fg}Enter Edit Field | Tab Next Tab | Esc Cancel/Back{/}`;
     } else if (this.state.activeTab === "summary") {
       keysLine = `{${BLESSED_COLORS.muted}-fg}Left/Right Select Button | Enter Confirm | Esc Back{/}`;

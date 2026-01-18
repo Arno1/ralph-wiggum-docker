@@ -27,13 +27,7 @@ export {
 export type { ModalOptions } from "./Modal.js";
 
 // Tab Bar
-export {
-  createTabBar,
-  updateTabBar,
-  getTabByIndex,
-  getNextTab,
-  getPrevTab,
-} from "./TabBar.js";
+export { createTabBar, updateTabBar, getTabByIndex, getNextTab, getPrevTab } from "./TabBar.js";
 export type { TabBarOptions } from "./TabBar.js";
 
 // Status Bar

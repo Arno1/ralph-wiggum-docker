@@ -815,7 +815,7 @@ export class BlessedTUIApp {
       return;
     }
 
-    const backendInfo = BACKENDS.find(b => b.id === backend);
+    const backendInfo = BACKENDS.find((b) => b.id === backend);
     const authModes = backendInfo?.authModes || [];
 
     // Find current index
@@ -856,8 +856,10 @@ export class BlessedTUIApp {
     const { activeTab, focusedField } = this.state;
 
     if (activeTab === "builder" && focusedField === 1) return true;
-    if (activeTab === "reviewer" && focusedField === 2 && this.state.config.reviewer.enabled) return true;
-    if (activeTab === "architect" && focusedField === 2 && this.state.config.architect.enabled) return true;
+    if (activeTab === "reviewer" && focusedField === 2 && this.state.config.reviewer.enabled)
+      return true;
+    if (activeTab === "architect" && focusedField === 2 && this.state.config.architect.enabled)
+      return true;
 
     return false;
   }

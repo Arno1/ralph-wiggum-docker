@@ -7,12 +7,7 @@ import blessed from "blessed";
 import type { ProjectInfo } from "../../../utils/project-status.js";
 import { formatRelativeTime } from "../../../utils/project-status.js";
 import type { AppState, ListViewMode } from "../../state.js";
-import {
-  BLESSED_COLORS,
-  formatProgressBar,
-  formatProviderBadge,
-  getStatusIcon,
-} from "../theme.js";
+import { BLESSED_COLORS, formatProgressBar, formatProviderBadge, getStatusIcon } from "../theme.js";
 
 export interface ProjectListOptions {
   parent: blessed.Widgets.Screen | blessed.Widgets.BoxElement;
@@ -90,11 +85,7 @@ function formatProjectRow(
 
     let progress = "    -    ";
     if (project.taskProgress && project.taskProgress.total > 0) {
-      progress = formatProgressBar(
-        project.taskProgress.completed,
-        project.taskProgress.total,
-        8,
-      );
+      progress = formatProgressBar(project.taskProgress.completed, project.taskProgress.total, 8);
     }
 
     const updated = formatRelativeTime(project.lastActivity);
@@ -274,10 +265,7 @@ export function createProjectListFooter(
 /**
  * Update the footer with new selection
  */
-export function updateProjectListFooter(
-  footer: blessed.Widgets.BoxElement,
-  state: AppState,
-): void {
+export function updateProjectListFooter(footer: blessed.Widgets.BoxElement, state: AppState): void {
   const projects = state.projects || [];
   const selected = projects[state.selectedProjectIndex || 0];
 
