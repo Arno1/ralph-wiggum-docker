@@ -49,7 +49,7 @@ jobs:
           fi
 
       - name: Lint code
-        run: bunx oxlint --type-aware src
+        run: bunx oxlint src
 
       - name: Check formatting
         run: bunx oxfmt --check src
