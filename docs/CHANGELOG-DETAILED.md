@@ -5,6 +5,12 @@ Full changelog with categorized changes from all commits.
 For a summary, see [CHANGELOG.md](../CHANGELOG.md).
 
 
+## [0.1.10] - 2026-01-18
+
+### Fixed
+- Add 'closed' event to auto-release workflow
+
+
 ## [0.1.9] - 2026-01-18
 
 ### Fixed
@@ -121,3 +127,4 @@ Initial release.
 [0.1.7]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.6...v0.1.7
 [0.1.8]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.7...v0.1.8
 [0.1.9]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.8...v0.1.9
+[0.1.10]: https://github.com/jodagreyhame/ralph-wiggum-docker/compare/v0.1.9...v0.1.10
