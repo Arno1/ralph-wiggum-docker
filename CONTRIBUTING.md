@@ -25,7 +25,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Test with the Docker test suite: `.claude/skills/docker-test/scripts/test-all.sh`
+4. Test with the Docker test suite: `./test/test-all.sh`
 5. Commit with clear messages (see below)
 6. Push and open a PR against `main`
 
@@ -77,16 +77,52 @@ ralph new test-project --preset=minimal
 
 ### Commit Messages
 
-Use conventional commits:
+**IMPORTANT:** This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning and changelog generation.
 
 ```
-feat: Add new feature
-fix: Fix bug in X
-docs: Update documentation
-refactor: Refactor X without changing behavior
-test: Add tests for X
-chore: Update dependencies
+<type>(<scope>): <description>
+
+[optional body]
 ```
+
+#### Types (required)
+
+| Type | Description | Version Bump |
+|------|-------------|--------------|
+| `feat` | New feature | Minor (0.X.0) |
+| `fix` | Bug fix | Patch (0.0.X) |
+| `docs` | Documentation only | Patch |
+| `refactor` | Code change (no feature/fix) | Patch |
+| `perf` | Performance improvement | Patch |
+| `test` | Adding/updating tests | No release |
+| `build` | Build system changes | No release |
+| `ci` | CI configuration | No release |
+| `chore` | Maintenance tasks | No release |
+
+#### Breaking Changes
+
+Add `!` after type or include `BREAKING CHANGE:` in body for major version bump:
+
+```
+feat!: Remove deprecated API endpoint
+```
+
+#### Examples
+
+```bash
+feat: Add provider fallback support
+feat(cli): Add --preset flag to new command
+fix: Resolve null pointer in config parser
+fix(docker): Mount permissions on Windows
+docs: Update Quick Start guide
+refactor(lib): Extract logging utilities
+```
+
+#### Automated Releases
+
+- PRs are validated for conventional commit format
+- Merges to `main` trigger automatic version bumps based on commit types
+- Changelog is auto-generated from commit messages
 
 ## Project Structure
 
@@ -110,10 +146,13 @@ Before submitting a PR:
 1. Run the test suite:
    ```bash
    # Linux/Mac
-   .claude/skills/docker-test/scripts/test-all.sh
+   ./test/test-all.sh
 
    # Windows
-   .\.claude\skills\docker-test\scripts\test-all.ps1
+   .\test\test-all.ps1
+
+   # CLI tests
+   ./test/cli/test-cli.sh
    ```
 
 2. Test with at least one auth mode (passthrough recommended)
