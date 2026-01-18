@@ -13,6 +13,10 @@
     "build": "bun build src/cli/index.ts --outdir dist/cli --target node",
     "tui": "bun run src/cli/index.ts tui",
     "lint": "tsc --noEmit",
+    "lint:code": "oxlint --type-aware src",
+    "lint:fix": "oxfmt --write src && oxlint --type-aware --fix src",
+    "format": "oxfmt --check src",
+    "format:fix": "oxfmt --write src",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -21,6 +25,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.39.0",
     "typescript": "~5.7.3"
   },
   "engines": {
