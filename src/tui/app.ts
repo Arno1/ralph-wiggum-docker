@@ -6,7 +6,14 @@
 import { theme } from "../theme/theme.js";
 import { BACKENDS, type Backend, type ProjectConfig } from "../config/schema.js";
 import { validateConfig } from "../config/validate.js";
-import { getProjectDir, projectExists, saveProjectConfig, slugify, deleteProject, loadProjectConfig } from "../utils/project.js";
+import {
+  getProjectDir,
+  projectExists,
+  saveProjectConfig,
+  slugify,
+  deleteProject,
+  loadProjectConfig,
+} from "../utils/project.js";
 import { copyTemplate, initGitRepo } from "../utils/template.js";
 import { loadAllProjectStatuses, loadProjectStatus } from "../utils/project-status.js";
 import { tailLogFile, initializeLogBuffer } from "../utils/log-tailer.js";
@@ -113,11 +120,13 @@ export class TUIApp {
       const projectInfo = loadProjectStatus(options.projectName);
       if (projectInfo) {
         initialState.selectedProject = projectInfo;
-        initialState.config = options.initialConfig || {
-          name: projectInfo.name,
-          description: projectInfo.description,
-          // Full config would be loaded from config.json
-        } as ProjectConfig;
+        initialState.config =
+          options.initialConfig ||
+          ({
+            name: projectInfo.name,
+            description: projectInfo.description,
+            // Full config would be loaded from config.json
+          } as ProjectConfig);
       }
     }
 
@@ -248,9 +257,17 @@ export class TUIApp {
   private renderProjectsList(lines: string[], width: number, height: number): void {
     // Header
     lines.push("");
-    lines.push(theme.heading("  ════════════════════════════════════════════════════════════════════════════"));
+    lines.push(
+      theme.heading(
+        "  ════════════════════════════════════════════════════════════════════════════",
+      ),
+    );
     lines.push(theme.heading("                         RALPH DASHBOARD"));
-    lines.push(theme.heading("  ════════════════════════════════════════════════════════════════════════════"));
+    lines.push(
+      theme.heading(
+        "  ════════════════════════════════════════════════════════════════════════════",
+      ),
+    );
 
     // Content
     const contentLines = renderProjectListScreen(this.state, { width, height });
@@ -274,9 +291,17 @@ export class TUIApp {
     // Header with project name
     const projectName = this.state.selectedProject?.name || "Unknown";
     lines.push("");
-    lines.push(theme.heading("  ════════════════════════════════════════════════════════════════════════════"));
+    lines.push(
+      theme.heading(
+        "  ════════════════════════════════════════════════════════════════════════════",
+      ),
+    );
     lines.push(theme.heading(`                         ${projectName.toUpperCase()}`));
-    lines.push(theme.heading("  ════════════════════════════════════════════════════════════════════════════"));
+    lines.push(
+      theme.heading(
+        "  ════════════════════════════════════════════════════════════════════════════",
+      ),
+    );
 
     // Content
     const contentLines = renderProjectDetailScreen(this.state, { width, height });
@@ -770,22 +795,54 @@ export class TUIApp {
   private renderHelpModal(): string[] {
     const lines: string[] = [];
     lines.push("");
-    lines.push(`  ${theme.dimmed("╔═══════════════════════════════════════════════════════════════════════════╗")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.header("KEYBOARD SHORTCUTS").padEnd(73)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╠═══════════════════════════════════════════════════════════════════════════╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Navigation:").padEnd(30)} ${theme.muted("↑/k - Up    ↓/j - Down    ←/h - Back    →/l - Forward").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("").padEnd(30)} ${theme.muted("Enter - Select  Esc - Back  Space - Toggle  q - Quit").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Projects List:").padEnd(30)} ${theme.muted("Enter - Open    Space - Expand    d - Delete    r - Refresh").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Project Detail:").padEnd(30)} ${theme.muted("1-5 - Tabs      r - Refresh    ? - Help").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Tasks Tab:").padEnd(30)} ${theme.muted("↑↓ - Navigate  f - Filter  Enter - Details").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Config Tab:").padEnd(30)} ${theme.muted("Enter/e - Edit config").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.text("Config Editor:").padEnd(30)} ${theme.muted("1-6 - Tabs      Space - Toggle  Enter - Select").padEnd(43)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.muted("Press ? or Esc to close").padEnd(73)} ${theme.dimmed("║")}`);
-    lines.push(`  ${theme.dimmed("╚═══════════════════════════════════════════════════════════════════════════╝")}`);
+    lines.push(
+      `  ${theme.dimmed("╔═══════════════════════════════════════════════════════════════════════════╗")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.header("KEYBOARD SHORTCUTS").padEnd(73)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╠═══════════════════════════════════════════════════════════════════════════╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Navigation:").padEnd(30)} ${theme.muted("↑/k - Up    ↓/j - Down    ←/h - Back    →/l - Forward").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("").padEnd(30)} ${theme.muted("Enter - Select  Esc - Back  Space - Toggle  q - Quit").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Projects List:").padEnd(30)} ${theme.muted("Enter - Open    Space - Expand    d - Delete    r - Refresh").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Project Detail:").padEnd(30)} ${theme.muted("1-5 - Tabs      r - Refresh    ? - Help").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Tasks Tab:").padEnd(30)} ${theme.muted("↑↓ - Navigate  f - Filter  Enter - Details").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Config Tab:").padEnd(30)} ${theme.muted("Enter/e - Edit config").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.text("Config Editor:").padEnd(30)} ${theme.muted("1-6 - Tabs      Space - Toggle  Enter - Select").padEnd(43)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.muted("Press ? or Esc to close").padEnd(73)} ${theme.dimmed("║")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("╚═══════════════════════════════════════════════════════════════════════════╝")}`,
+    );
     lines.push("");
     return lines;
   }
@@ -796,14 +853,30 @@ export class TUIApp {
     const projectName = project?.name || "this project";
 
     lines.push("");
-    lines.push(`  ${theme.error("╔═══════════════════════════════════════════════════════════════════════════╗")}`);
-    lines.push(`  ${theme.error("║")} ${theme.header("DELETE PROJECT").padEnd(73)} ${theme.error("║")}`);
-    lines.push(`  ${theme.error("╠═══════════════════════════════════════════════════════════════════════════╣")}`);
-    lines.push(`  ${theme.error("║")} ${theme.warning(`Delete '${projectName}'? This cannot be undone.`).padEnd(73)} ${theme.error("║")}`);
-    lines.push(`  ${theme.error("╠═══════════════════════════════════════════════════════════════════════════╣")}`);
-    lines.push(`  ${theme.error("║")} ${theme.success("Y - Yes, delete").padEnd(73)} ${theme.error("║")}`);
-    lines.push(`  ${theme.error("║")} ${theme.muted("N - No, cancel").padEnd(73)} ${theme.error("║")}`);
-    lines.push(`  ${theme.error("╚═══════════════════════════════════════════════════════════════════════════╝")}`);
+    lines.push(
+      `  ${theme.error("╔═══════════════════════════════════════════════════════════════════════════╗")}`,
+    );
+    lines.push(
+      `  ${theme.error("║")} ${theme.header("DELETE PROJECT").padEnd(73)} ${theme.error("║")}`,
+    );
+    lines.push(
+      `  ${theme.error("╠═══════════════════════════════════════════════════════════════════════════╣")}`,
+    );
+    lines.push(
+      `  ${theme.error("║")} ${theme.warning(`Delete '${projectName}'? This cannot be undone.`).padEnd(73)} ${theme.error("║")}`,
+    );
+    lines.push(
+      `  ${theme.error("╠═══════════════════════════════════════════════════════════════════════════╣")}`,
+    );
+    lines.push(
+      `  ${theme.error("║")} ${theme.success("Y - Yes, delete").padEnd(73)} ${theme.error("║")}`,
+    );
+    lines.push(
+      `  ${theme.error("║")} ${theme.muted("N - No, cancel").padEnd(73)} ${theme.error("║")}`,
+    );
+    lines.push(
+      `  ${theme.error("╚═══════════════════════════════════════════════════════════════════════════╝")}`,
+    );
     lines.push("");
     return lines;
   }

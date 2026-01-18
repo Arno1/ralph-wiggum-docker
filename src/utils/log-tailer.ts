@@ -58,10 +58,7 @@ export function initializeLogBuffer(projectName: string, maxLines: number = 100)
 /**
  * Tail the log file and return new lines since last position
  */
-export function tailLogFile(
-  projectName: string,
-  lastPosition: number,
-): TailResult {
+export function tailLogFile(projectName: string, lastPosition: number): TailResult {
   const logPath = getLogPath(projectName);
 
   if (!fs.existsSync(logPath)) {
@@ -195,7 +192,11 @@ export function getIterations(projectName: string): IterationInfo[] {
  */
 export function getIterationDiff(projectName: string, iteration: number): string | null {
   const projectDir = getProjectDir(projectName);
-  const iterationDir = path.join(projectDir, "logs", `iteration_${String(iteration).padStart(3, "0")}`);
+  const iterationDir = path.join(
+    projectDir,
+    "logs",
+    `iteration_${String(iteration).padStart(3, "0")}`,
+  );
   const diffPath = path.join(iterationDir, "git_diff.txt");
 
   if (!fs.existsSync(diffPath)) {
@@ -219,7 +220,11 @@ export interface FileChange {
 
 export function getIterationFiles(projectName: string, iteration: number): FileChange[] {
   const projectDir = getProjectDir(projectName);
-  const iterationDir = path.join(projectDir, "logs", `iteration_${String(iteration).padStart(3, "0")}`);
+  const iterationDir = path.join(
+    projectDir,
+    "logs",
+    `iteration_${String(iteration).padStart(3, "0")}`,
+  );
   const filesPath = path.join(iterationDir, "files_changed.json");
 
   if (!fs.existsSync(filesPath)) {

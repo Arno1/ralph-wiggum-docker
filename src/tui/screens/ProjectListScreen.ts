@@ -43,9 +43,7 @@ function renderCompactMode(
   // Header
   lines.push("");
   lines.push(
-    theme.header(
-      "   #   PROJECT                STATUS      ITER    PROGRESS    UPDATED        ",
-    ),
+    theme.header("   #   PROJECT                STATUS      ITER    PROGRESS    UPDATED        "),
   );
   lines.push(theme.dimmed("   " + "─".repeat(74)));
 
@@ -79,9 +77,10 @@ function renderCompactMode(
     // Progress bar
     let progressCol = "    -    ";
     if (p.taskProgress) {
-      const percent = p.taskProgress.total > 0
-        ? Math.round((p.taskProgress.completed / p.taskProgress.total) * 100)
-        : 0;
+      const percent =
+        p.taskProgress.total > 0
+          ? Math.round((p.taskProgress.completed / p.taskProgress.total) * 100)
+          : 0;
       const barWidth = 8;
       const filled = Math.round(barWidth * (percent / 100));
       const bar = theme.success("█".repeat(filled)) + theme.dimmed("░".repeat(barWidth - filled));
@@ -109,9 +108,7 @@ function renderExpandedMode(
   // Header
   lines.push("");
   lines.push(
-    theme.header(
-      "   #   PROJECT           DESCRIPTION              STATUS     ITER   PROVIDER   ",
-    ),
+    theme.header("   #   PROJECT           DESCRIPTION              STATUS     ITER   PROVIDER   "),
   );
   lines.push(theme.dimmed("   " + "─".repeat(78)));
 
@@ -147,9 +144,7 @@ function renderExpandedMode(
     const providerCol = p.provider ? providerBadge(p.provider) : theme.muted("-");
 
     // First line
-    lines.push(
-      ` ${prefix} ${num}   ${nameCol} ${descCol} ${statusCol} ${iterCol} ${providerCol}`,
-    );
+    lines.push(` ${prefix} ${num}   ${nameCol} ${descCol} ${statusCol} ${iterCol} ${providerCol}`);
 
     // Second line with task progress
     if (p.taskProgress && p.taskProgress.total > 0) {
@@ -184,9 +179,7 @@ function renderStatsBar(projects: ProjectInfo[], viewMode: ListViewMode): string
   const idle = projects.filter((p) => p.status === "idle").length;
   const blocked = projects.filter((p) => p.status === "blocked").length;
 
-  const parts: string[] = [
-    theme.primary(`${total} Projects`),
-  ];
+  const parts: string[] = [theme.primary(`${total} Projects`)];
 
   if (running > 0) {
     parts.push(theme.warning(`● ${running} Running`));
@@ -211,10 +204,7 @@ function renderStatsBar(projects: ProjectInfo[], viewMode: ListViewMode): string
 /**
  * Render the projects list screen
  */
-export function renderProjectListScreen(
-  state: AppState,
-  options: RenderOptions,
-): string[] {
+export function renderProjectListScreen(state: AppState, options: RenderOptions): string[] {
   const projects = state.projects || [];
   const selectedIndex = state.selectedProjectIndex || 0;
   const viewMode = state.listViewMode || "compact";
@@ -245,9 +235,7 @@ export function getProjectListFooterInfo(state: AppState): string {
     return theme.muted("No projects");
   }
 
-  const parts: string[] = [
-    theme.primary(`Selected: ${selected.name}`),
-  ];
+  const parts: string[] = [theme.primary(`Selected: ${selected.name}`)];
 
   if (selected.status === "running") {
     parts.push(theme.warning("● Running"));
@@ -270,7 +258,5 @@ export function getProjectListFooterInfo(state: AppState): string {
  * Get footer keyboard shortcuts for projects list
  */
 export function getProjectListFooterKeys(): string {
-  return theme.muted(
-    "↑↓ Navigate │ Enter Open │ Space Expand │ n New │ d Delete │ r Refresh │ ?",
-  );
+  return theme.muted("↑↓ Navigate │ Enter Open │ Space Expand │ n New │ d Delete │ r Refresh │ ?");
 }

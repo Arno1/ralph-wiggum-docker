@@ -90,13 +90,14 @@ function renderOverview(project: ProjectInfo): string[] {
   lines.push("");
 
   // Status row
-  const statusIcon = project.status === "running"
-    ? theme.warning("● Running")
-    : project.status === "completed"
-    ? theme.success("✓ Complete")
-    : project.status === "blocked"
-    ? theme.error("✕ Blocked")
-    : theme.muted("○ Idle");
+  const statusIcon =
+    project.status === "running"
+      ? theme.warning("● Running")
+      : project.status === "completed"
+        ? theme.success("✓ Complete")
+        : project.status === "blocked"
+          ? theme.error("✕ Blocked")
+          : theme.muted("○ Idle");
 
   lines.push(
     `  ${theme.text("STATUS:").padEnd(14)} ${statusIcon.padEnd(20)} ${theme.text("PROVIDER:").padEnd(14)} ${project.provider ? providerBadge(project.provider) : theme.muted("-")}`,
@@ -109,14 +110,18 @@ function renderOverview(project: ProjectInfo): string[] {
   );
 
   lines.push("");
-  lines.push(`  ${theme.header("PROGRESS ─────────────────────────────────────────────────────────────")}`);
+  lines.push(
+    `  ${theme.header("PROGRESS ─────────────────────────────────────────────────────────────")}`,
+  );
 
   // Task progress
   if (project.taskProgress && project.taskProgress.total > 0) {
     const { completed, total, currentPhase } = project.taskProgress;
     const bar = progressBar(completed, total, 30);
 
-    lines.push(`  ${theme.text("Overall:")} ${bar} ${theme.muted(`(${completed}/${total} tasks)`)}`);
+    lines.push(
+      `  ${theme.text("Overall:")} ${bar} ${theme.muted(`(${completed}/${total} tasks)`)}`,
+    );
     lines.push("");
     lines.push(`  ${theme.text("Current Phase:")} ${theme.info(currentPhase)}`);
   } else {
@@ -124,7 +129,9 @@ function renderOverview(project: ProjectInfo): string[] {
   }
 
   lines.push("");
-  lines.push(`  ${theme.header("PHASES ────────────────────────────────────────────────────────────────")}`);
+  lines.push(
+    `  ${theme.header("PHASES ────────────────────────────────────────────────────────────────")}`,
+  );
 
   // Load phases for detailed progress
   const phases = loadPhases(project.path);
@@ -142,7 +149,9 @@ function renderOverview(project: ProjectInfo): string[] {
   }
 
   lines.push("");
-  lines.push(`  ${theme.header("CURRENT TASK ──────────────────────────────────────────────────────────")}`);
+  lines.push(
+    `  ${theme.header("CURRENT TASK ──────────────────────────────────────────────────────────")}`,
+  );
 
   // Find current task from phases
   let currentTask: Task | undefined;
@@ -156,7 +165,9 @@ function renderOverview(project: ProjectInfo): string[] {
 
   if (currentTask) {
     lines.push(`  ${theme.text(`Task ${currentTask.id}:`)} ${theme.info(currentTask.name)}`);
-    lines.push(`  ${theme.text("Provider:")} ${providerBadge(currentTask.provider)}  ${theme.text("Complexity:")} ${complexityBadge(currentTask.complexity)}  ${theme.text("Status:")} ${theme.warning("in_progress")}`);
+    lines.push(
+      `  ${theme.text("Provider:")} ${providerBadge(currentTask.provider)}  ${theme.text("Complexity:")} ${complexityBadge(currentTask.complexity)}  ${theme.text("Status:")} ${theme.warning("in_progress")}`,
+    );
   } else {
     lines.push(`  ${theme.muted("No active task")}`);
   }
@@ -206,16 +217,18 @@ function renderTasks(project: ProjectInfo, state: AppState): string[] {
     lines.push(`  ${theme.dimmed("─".repeat(70))}`);
 
     for (const task of tasks) {
-      const statusIcon = task.status === "completed"
-        ? theme.success("●")
-        : task.status === "in_progress"
-        ? theme.warning("◐")
-        : task.status === "blocked"
-        ? theme.error("✕")
-        : theme.muted("○");
+      const statusIcon =
+        task.status === "completed"
+          ? theme.success("●")
+          : task.status === "in_progress"
+            ? theme.warning("◐")
+            : task.status === "blocked"
+              ? theme.error("✕")
+              : theme.muted("○");
 
-      const isSelected = state.selectedTaskIndex !== undefined
-        && state.selectedTaskIndex === phase.tasks.indexOf(task);
+      const isSelected =
+        state.selectedTaskIndex !== undefined &&
+        state.selectedTaskIndex === phase.tasks.indexOf(task);
 
       const prefix = isSelected ? theme.primary("▶") : " ";
 
@@ -350,9 +363,10 @@ function renderHistory(project: ProjectInfo, state: AppState): string[] {
       statusColor = theme.error;
     }
 
-    const duration = iter.duration !== undefined
-      ? `${Math.floor(iter.duration / 60)}m ${Math.round(iter.duration % 60)}s`
-      : "-";
+    const duration =
+      iter.duration !== undefined
+        ? `${Math.floor(iter.duration / 60)}m ${Math.round(iter.duration % 60)}s`
+        : "-";
 
     lines.push(
       ` ${prefix} ${theme.muted(String(iter.number).padStart(3))}  ${statusColor(status.padEnd(10))} ${theme.muted(duration.padEnd(12))} ${theme.muted(formatRelativeTime(project.lastActivity))}`,
@@ -366,8 +380,12 @@ function renderHistory(project: ProjectInfo, state: AppState): string[] {
   const selectedIter = iterations[state.selectedIterationIndex || 0];
   if (selectedIter) {
     lines.push(`  ${theme.text("Iteration:")} ${theme.primary(String(selectedIter.number))}`);
-    lines.push(`  ${theme.text("Duration:")} ${theme.muted(selectedIter.duration ? `${selectedIter.duration}s` : "Unknown")}`);
-    lines.push(`  ${theme.text("Exit Code:")} ${selectedIter.exitCode !== undefined ? (selectedIter.exitCode === 0 ? theme.success("0") : theme.error(String(selectedIter.exitCode))) : theme.muted("-")}`);
+    lines.push(
+      `  ${theme.text("Duration:")} ${theme.muted(selectedIter.duration ? `${selectedIter.duration}s` : "Unknown")}`,
+    );
+    lines.push(
+      `  ${theme.text("Exit Code:")} ${selectedIter.exitCode !== undefined ? (selectedIter.exitCode === 0 ? theme.success("0") : theme.error(String(selectedIter.exitCode))) : theme.muted("-")}`,
+    );
   }
 
   return lines;
@@ -401,13 +419,19 @@ function renderConfig(project: ProjectInfo): string[] {
   lines.push("");
   lines.push(`  ${theme.header("PROJECT")}`);
   lines.push(`  ${theme.text("Name:")} ${theme.primary(config.name || project.name)}`);
-  lines.push(`  ${theme.text("Description:")} ${theme.muted(config.description || project.description)}`);
+  lines.push(
+    `  ${theme.text("Description:")} ${theme.muted(config.description || project.description)}`,
+  );
   lines.push("");
 
   lines.push(`  ${theme.header("BUILDER")}`);
-  lines.push(`  ${theme.text("Backend:")} ${theme.info(config.builder?.backend || project.provider || "-")}`);
+  lines.push(
+    `  ${theme.text("Backend:")} ${theme.info(config.builder?.backend || project.provider || "-")}`,
+  );
   lines.push(`  ${theme.text("Auth Mode:")} ${theme.muted(config.builder?.auth_mode || "-")}`);
-  lines.push(`  ${theme.text("Model:")} ${theme.muted(config.builder?.model || project.model || "-")}`);
+  lines.push(
+    `  ${theme.text("Model:")} ${theme.muted(config.builder?.model || project.model || "-")}`,
+  );
   lines.push(`  ${theme.text("Session:")} ${theme.muted(config.builder?.session_mode || "-")}`);
   lines.push("");
 
@@ -422,9 +446,15 @@ function renderConfig(project: ProjectInfo): string[] {
   lines.push("");
 
   lines.push(`  ${theme.header("LOOP SETTINGS")}`);
-  lines.push(`  ${theme.text("Max Iterations:")} ${theme.muted(config.max_iterations === 0 ? "∞ (unlimited)" : String(config.max_iterations))}`);
-  lines.push(`  ${theme.text("Completion Detection:")} ${config.completion_enabled ? theme.success("Yes") : theme.muted("No")}`);
-  lines.push(`  ${theme.text("Escalation:")} ${config.escalation?.enabled ? theme.success("Yes") : theme.muted("No")}`);
+  lines.push(
+    `  ${theme.text("Max Iterations:")} ${theme.muted(config.max_iterations === 0 ? "∞ (unlimited)" : String(config.max_iterations))}`,
+  );
+  lines.push(
+    `  ${theme.text("Completion Detection:")} ${config.completion_enabled ? theme.success("Yes") : theme.muted("No")}`,
+  );
+  lines.push(
+    `  ${theme.text("Escalation:")} ${config.escalation?.enabled ? theme.success("Yes") : theme.muted("No")}`,
+  );
   lines.push("");
 
   lines.push(`  ${theme.info("Press Enter or 'e' to edit config")}`);
@@ -436,10 +466,7 @@ function renderConfig(project: ProjectInfo): string[] {
 /**
  * Render the project detail screen
  */
-export function renderProjectDetailScreen(
-  state: AppState,
-  options: RenderOptions,
-): string[] {
+export function renderProjectDetailScreen(state: AppState, options: RenderOptions): string[] {
   const project = state.selectedProject;
 
   if (!project) {
@@ -581,23 +608,38 @@ export function renderTaskDetailModal(project: ProjectInfo, state: AppState): st
   }
 
   lines.push("");
-  lines.push(`  ${theme.dimmed("╔═══════════════════════════════════════════════════════════════════════════╗")}`);
-  lines.push(`  ${theme.dimmed("║")} ${theme.header(`TASK ${task.id}: ${task.name}`).padEnd(73)} ${theme.dimmed("║")}`);
-  lines.push(`  ${theme.dimmed("╠═══════════════════════════════════════════════════════════════════════════╣")}`);
+  lines.push(
+    `  ${theme.dimmed("╔═══════════════════════════════════════════════════════════════════════════╗")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.header(`TASK ${task.id}: ${task.name}`).padEnd(73)} ${theme.dimmed("║")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("╠═══════════════════════════════════════════════════════════════════════════╣")}`,
+  );
 
   // Status and metadata
-  const statusColor = task.status === "completed"
-    ? theme.success
-    : task.status === "in_progress"
-    ? theme.warning
-    : task.status === "blocked"
-    ? theme.error
-    : theme.muted;
+  const statusColor =
+    task.status === "completed"
+      ? theme.success
+      : task.status === "in_progress"
+        ? theme.warning
+        : task.status === "blocked"
+          ? theme.error
+          : theme.muted;
 
-  lines.push(`  ${theme.dimmed("║")} ${theme.text("Status:").padEnd(20)} ${statusColor(task.status.toUpperCase()).padEnd(53)} ${theme.dimmed("║")}`);
-  lines.push(`  ${theme.dimmed("║")} ${theme.text("Provider:").padEnd(20)} ${providerBadge(task.provider).padEnd(53)} ${theme.dimmed("║")}`);
-  lines.push(`  ${theme.dimmed("║")} ${theme.text("Complexity:").padEnd(20)} ${complexityBadge(task.complexity).padEnd(53)} ${theme.dimmed("║")}`);
-  lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.text("Status:").padEnd(20)} ${statusColor(task.status.toUpperCase()).padEnd(53)} ${theme.dimmed("║")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.text("Provider:").padEnd(20)} ${providerBadge(task.provider).padEnd(53)} ${theme.dimmed("║")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.text("Complexity:").padEnd(20)} ${complexityBadge(task.complexity).padEnd(53)} ${theme.dimmed("║")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+  );
 
   // Description
   const descLines = task.description.split("\n");
@@ -605,38 +647,66 @@ export function renderTaskDetailModal(project: ProjectInfo, state: AppState): st
     lines.push(`  ${theme.dimmed("║")} ${theme.text(descLine).padEnd(73)} ${theme.dimmed("║")}`);
   }
 
-  lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
+  lines.push(
+    `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+  );
 
   // Additional info
-  lines.push(`  ${theme.dimmed("║")} ${theme.text("Dependencies:").padEnd(20)} ${theme.muted(task.depends_on.length > 0 ? task.depends_on.join(", ") : "None").padEnd(53)} ${theme.dimmed("║")}`);
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.text("Dependencies:").padEnd(20)} ${theme.muted(task.depends_on.length > 0 ? task.depends_on.join(", ") : "None").padEnd(53)} ${theme.dimmed("║")}`,
+  );
 
   if (task.acceptance_criteria && task.acceptance_criteria.length > 0) {
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.header("Acceptance Criteria:").padEnd(73)} ${theme.dimmed("║")}`);
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.header("Acceptance Criteria:").padEnd(73)} ${theme.dimmed("║")}`,
+    );
     for (const criteria of task.acceptance_criteria) {
-      lines.push(`  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.text(criteria).padEnd(68)} ${theme.dimmed("║")}`);
+      lines.push(
+        `  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.text(criteria).padEnd(68)} ${theme.dimmed("║")}`,
+      );
     }
   }
 
   if (task.files_to_create && task.files_to_create.length > 0) {
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.header("Files to Create:").padEnd(73)} ${theme.dimmed("║")}`);
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.header("Files to Create:").padEnd(73)} ${theme.dimmed("║")}`,
+    );
     for (const file of task.files_to_create) {
-      lines.push(`  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.info(file).padEnd(68)} ${theme.dimmed("║")}`);
+      lines.push(
+        `  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.info(file).padEnd(68)} ${theme.dimmed("║")}`,
+      );
     }
   }
 
   if (task.files_to_modify && task.files_to_modify.length > 0) {
-    lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-    lines.push(`  ${theme.dimmed("║")} ${theme.header("Files to Modify:").padEnd(73)} ${theme.dimmed("║")}`);
+    lines.push(
+      `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+    );
+    lines.push(
+      `  ${theme.dimmed("║")} ${theme.header("Files to Modify:").padEnd(73)} ${theme.dimmed("║")}`,
+    );
     for (const file of task.files_to_modify) {
-      lines.push(`  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.warning(file).padEnd(68)} ${theme.dimmed("║")}`);
+      lines.push(
+        `  ${theme.dimmed("║")}   ${theme.muted("•").padEnd(3)} ${theme.warning(file).padEnd(68)} ${theme.dimmed("║")}`,
+      );
     }
   }
 
-  lines.push(`  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`);
-  lines.push(`  ${theme.dimmed("║")} ${theme.muted("Press Enter or Esc to close").padEnd(73)} ${theme.dimmed("║")}`);
-  lines.push(`  ${theme.dimmed("╚═══════════════════════════════════════════════════════════════════════════╝")}`);
+  lines.push(
+    `  ${theme.dimmed("╠───────────────────────────────────────────────────────────────────────────╣")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("║")} ${theme.muted("Press Enter or Esc to close").padEnd(73)} ${theme.dimmed("║")}`,
+  );
+  lines.push(
+    `  ${theme.dimmed("╚═══════════════════════════════════════════════════════════════════════════╝")}`,
+  );
   lines.push("");
 
   return lines;

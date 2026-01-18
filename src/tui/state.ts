@@ -406,7 +406,10 @@ export function setSelectedTaskIndex(state: AppState, index: number): AppState {
 
 export function navigateTasks(state: AppState, direction: "up" | "down"): AppState {
   // This will be called with actual task count from render
-  return { ...state, selectedTaskIndex: Math.max(0, (state.selectedTaskIndex || 0) + (direction === "up" ? -1 : 1)) };
+  return {
+    ...state,
+    selectedTaskIndex: Math.max(0, (state.selectedTaskIndex || 0) + (direction === "up" ? -1 : 1)),
+  };
 }
 
 export function toggleTaskDetail(state: AppState): AppState {
