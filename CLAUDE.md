@@ -97,28 +97,28 @@ ralph -p <path> -s progress   # Progress view
   "builder": {
     "backend": "claude",
     "auth_mode": "glm",
-    "model": null,
+    "model": "glm-4.7",
     "session_mode": "fresh"
   },
 
   "reviewer": {
-    "enabled": false,
+    "enabled": true,
     "backend": "claude",
     "auth_mode": "anthropic-oauth",
-    "model": null,
+    "model": "opus",
     "session_mode": "fresh"
   },
 
   "architect": {
-    "enabled": false,
-    "backend": "gemini",
-    "auth_mode": "gemini-oauth",
-    "model": null,
+    "enabled": true,
+    "backend": "opencode",
+    "auth_mode": "opencode-oauth",
+    "model": "google/antigravity-gemini-3-pro",
     "session_mode": "resume"
   },
 
   "escalation": {
-    "enabled": false,
+    "enabled": true,
     "max_builder_failures": 3
   },
 
@@ -132,6 +132,12 @@ ralph -p <path> -s progress   # Progress view
       {"name": "codex", "backend": "codex", "auth_mode": "openai-oauth"},
       {"name": "opencode", "backend": "opencode", "auth_mode": "opencode-oauth", "model": "google/antigravity-claude-opus-4-5-thinking"}
     ]
+  },
+
+  "task_mode": {
+    "enabled": false,
+    "specs_dir": ".project/specs/tasks",
+    "steering_file": ".project/steering.md"
   },
 
   "max_iterations": 0,
@@ -164,6 +170,9 @@ ralph -p <path> -s progress   # Progress view
 | | failure_threshold | number | CLI failures before switching (default: 10) |
 | | sequence | array | Provider fallback order (see formats below) |
 | | auth_modes | object | (Optional, string format only) Auth mode per provider |
+| **task_mode** | enabled | `true`/`false` | Enable task specifications |
+| | specs_dir | path | Directory for task spec files |
+| | steering_file | path | Steering file path |
 | **root** | max_iterations | number, 0=infinite | Stop after N iterations |
 | | completion_enabled | `true`/`false` | Enable file-based completion |
 
@@ -233,7 +242,7 @@ EOF
 ## Project Structure
 
 ```
-ralph-wiggum-docker-loop/
+ralph-wiggum-docker/
 ├── CLAUDE.md                     # This file
 ├── README.md                     # User documentation
 ├── docker-compose.yml            # Container orchestration
@@ -248,33 +257,53 @@ ralph-wiggum-docker-loop/
 │   ├── GOAL.md                   # Project objective template
 │   ├── AGENTS.md                 # Development rules (canonical)
 │   ├── config.json               # 3-tier config template
-│   └── .project/prompts/         # Role prompts (hidden)
-│       ├── BUILDER.md            # Builder workflow
-│       ├── REVIEWER.md           # Reviewer instructions
-│       └── ARCHITECT.md          # Architect instructions
+│   ├── .project/prompts/         # Role prompts
+│   │   ├── BUILDER.md            # Builder workflow
+│   │   ├── REVIEWER.md           # Reviewer instructions
+│   │   └── ARCHITECT.md          # Architect instructions
+│   └── .project/specs/tasks/     # Task specifications
+│       ├── schema.json           # Task JSON schema
+│       └── summary.json          # Task summary
 ├── docker/                       # Docker infrastructure
 │   ├── Dockerfile
 │   ├── entrypoint.sh             # Config parsing, env setup
-│   ├── ralph.sh                  # Main loop script (~220 lines)
+│   ├── ralph.sh                  # Main loop script
 │   ├── cli/                      # CLI backend configs
 │   │   ├── claude.sh
 │   │   ├── gemini.sh
 │   │   ├── codex.sh
 │   │   └── opencode.sh
-│   └── lib/                      # Library modules
-│       ├── colors.sh             # Terminal colors
-│       ├── display.sh            # Banners, logging
-│       ├── filter.sh             # Output filtering
-│       ├── tracking.sh           # Git diff tracking
-│       ├── escalation.sh         # Role escalation logic
-│       ├── phases.sh             # Reviewer/architect phases
-│       ├── completion.sh         # Completion detection
-│       └── feedback.sh           # Feedback injection
+│   ├── lib/                      # Library modules
+│   │   ├── colors.sh             # Terminal colors
+│   │   ├── display.sh            # Banners, logging
+│   │   ├── filter.sh             # Output filtering
+│   │   ├── tracking.sh           # Git diff tracking
+│   │   ├── escalation.sh         # Role escalation logic
+│   │   ├── phases.sh             # Reviewer/architect phases
+│   │   ├── completion.sh         # Completion detection
+│   │   ├── feedback.sh           # Feedback injection
+│   │   ├── preflight.sh          # Pre-flight validation
+│   │   ├── validation.sh         # Task validation loop
+│   │   ├── verify.sh             # Build/test verification
+│   │   ├── provider-health.sh    # Provider health tracking
+│   │   ├── provider-switch.sh    # Provider fallback logic
+│   │   ├── env.sh                # Environment setup
+│   │   ├── steering.sh           # Task steering
+│   │   ├── tasks.sh              # Task management
+│   │   └── error-classifier.sh   # Error classification
+│   ├── formatter/                # JS output formatter
+│   └── parsers/                  # JQ parsers for backends
 ├── .projects/                    # All projects (gitignored)
 │   └── <project>/                # Each project (isolated)
 ├── test/                         # Test suite
-│   └── cli/                      # CLI tests
+│   ├── test-all.sh               # Main test runner
+│   ├── auth/                     # Auth mode tests
+│   ├── backends/                 # Backend tests
+│   ├── cli/                      # CLI tests
+│   └── self-healing/             # Self-healing tests
 ├── scripts/                      # Launcher scripts
+│   ├── run.sh                    # Unix launcher
+│   └── run.ps1                   # Windows launcher
 └── static/                       # Assets
 
 .projects/<project>/              # Each project (isolated)
@@ -299,6 +328,10 @@ ralph-wiggum-docker-loop/
 │   ├── architect/                # Architect state
 │   │   ├── decision.txt          # APPROVE/REJECT
 │   │   └── feedback.md           # If REJECT
+│   ├── specs/tasks/              # Task specifications
+│   │   ├── schema.json           # Task JSON schema
+│   │   ├── summary.json          # Task summary
+│   │   └── phase-*.json          # Phase task files
 │   └── knowledge/                # Patterns, failures
 ├── logs/                         # Iteration logs
 │   ├── session.log               # Full session log
@@ -580,3 +613,53 @@ Object format allows the same backend with different auth modes (e.g., GLM → C
 | `RALPH_PROJECT_NAME` | `PROJECT` | Project name for logs |
 | `RALPH_READABLE_OUTPUT` | `true` | Filter output for readability |
 | `RALPH_SHOW_THINKING` | `true` | Show thinking blocks (requires thinking model) |
+
+### Self-Healing Loops
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `RALPH_REVIEWER_RETRY_MAX` | `3` | Max retries when reviewer doesn't write decision |
+| `RALPH_ARCHITECT_RETRY_MAX` | `3` | Max retries when architect doesn't write decision |
+| `RALPH_VALIDATION_ENABLED` | `false` | Enable task format validation loop |
+| `RALPH_VALIDATION_MAX_ATTEMPTS` | `5` | Max validation attempts |
+| `RALPH_VERIFY_ENABLED` | `false` | Enable build/test verification after completion |
+| `RALPH_VERIFY_AGENT_MAX` | `3` | Max verification attempts |
+| `RALPH_ENABLE_REMEDIATION` | `false` | Enable auto-remediation for blocked verification |
+| `RALPH_REMEDIATE_MAX` | `2` | Max remediation attempts |
+
+## Self-Healing Loops
+
+The system includes several self-healing mechanisms that automatically retry on failures:
+
+### Pre-flight Validation
+Before the main loop starts, validates:
+- Builder prompt file exists
+- Reviewer/architect prompts exist (if enabled)
+- CLI backend scripts exist
+- Auth credentials accessible (warning only)
+
+### Reviewer/Architect Decision Retry
+When reviewer or architect doesn't write a `decision.txt` file:
+1. Retries the same agent with `--continue` flag
+2. Prompts agent to write the required decision file
+3. After `RALPH_REVIEWER_RETRY_MAX` (default 3) attempts, treats as FAIL
+4. Escalation system kicks in if configured
+
+### Validation Loop (Task Mode)
+When `RALPH_VALIDATION_ENABLED=true` and task specs exist:
+- Validates task specifications format in `.project/tasks/`
+- Retries with `--continue` until `<promise>VALIDATED</promise>`
+- Fails after `RALPH_VALIDATION_MAX_ATTEMPTS`
+
+### Verify Loop
+When `RALPH_VERIFY_ENABLED=true`:
+- Runs build/test verification after builder completion
+- Agent responds with `<verify>PASS</verify>`, `<verify>FAIL</verify>`, or `<verify>BLOCKED</verify>`
+- Retries on FAIL up to `RALPH_VERIFY_AGENT_MAX` times
+
+### Remediation Loop
+When `RALPH_ENABLE_REMEDIATION=true` and verify returns BLOCKED:
+- Agent attempts to fix environment (install tools, dependencies)
+- Responds with `<remediate>DONE</remediate>` or `<remediate>BLOCKED</remediate>`
+- After fix, retries verification
+- Fails after `RALPH_REMEDIATE_MAX` attempts
